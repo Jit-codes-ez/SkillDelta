@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Frontend/public/banner1.png" alt="SkillDelta Logo" width="400">
+  <img src="Frontend/public/banner.png" alt="SkillDelta Logo" width="400">
 </p>
 
 <div align="center">
