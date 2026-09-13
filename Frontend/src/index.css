@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #FFFBF1;
+    color: #850E35;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Subtle academic pattern utilities */
+.bg-technical-grid {
+  background-size: 36px 36px;
+  background-image: 
+    linear-gradient(to right, rgba(133, 14, 53, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(133, 14, 53, 0.08) 1px, transparent 1px);
+}
+
+.bg-technical-dots {
+  background-size: 28px 28px;
+  background-image: radial-gradient(rgba(133, 14, 53, 0.14) 1.2px, transparent 1.2px);
+}
+
+/* Subtle animated text gradient */
+@keyframes text-shimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-text-shimmer {
+  background-size: 200% auto;
+  animation: text-shimmer 6s ease infinite;
+}
+
+/* Custom crisp scrollbar with brand palette */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFF5E4;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(227, 106, 106, 0.6);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #850E35;
+}
