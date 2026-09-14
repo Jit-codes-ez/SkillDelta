@@ -36,20 +36,12 @@ export default function CTA() {
           </a>
 
           <a
-            href="#research"
+            href="#workflow"
             className="inline-flex items-center gap-2 px-7 py-4 rounded-xl bg-[#850E35]/60 hover:bg-[#850E35] text-[#FFFBF1] font-semibold text-sm border border-[#FFF5E4]/30 transition-all"
           >
             <BookOpen className="w-4 h-4 text-[#FFF5E4]/70" />
             <span>Explore the Methodology</span>
           </a>
-        </div>
-
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-xs text-[#FFF5E4]/70 font-mono">
-          <span>Open Academic Research Release v1.2</span>
-          <span>•</span>
-          <span>Zero Hallucination Grounding</span>
-          <span>•</span>
-          <span>MCA Thesis Project</span>
         </div>
       </div>
     </section>

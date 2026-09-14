@@ -1,6 +1,6 @@
 import React from 'react';
 import { Building2, BookOpen, Workflow, FlaskConical, ArrowRight } from 'lucide-react';
-
+import Card1 from '../components/Card1';
 const AUDIENCES = [
   {
     title: 'Universities & Institutional Leadership',
@@ -59,7 +59,7 @@ export default function WhoIsItFor() {
           {AUDIENCES.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <div
+              <Card1
                 key={idx}
                 className="bg-white rounded-2xl border border-[#850E35]/15 p-6 flex flex-col justify-between hover:border-[#850E35]/40 hover:shadow-sm transition-all group"
               >
@@ -86,7 +86,7 @@ export default function WhoIsItFor() {
                   <span>Stakeholder 0{idx + 1}</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#850E35]/30 group-hover:text-[#850E35] group-hover:translate-x-0.5 transition-all" />
                 </div>
-              </div>
+              </Card1>
             );
           })}
         </div>

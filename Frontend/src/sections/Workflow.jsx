@@ -11,6 +11,7 @@ import {
   ArrowRight,
   Workflow as WorkflowIcon
 } from 'lucide-react';
+import Card2 from '../components/Card2';
 
 const STEPS = [
   {
@@ -98,7 +99,7 @@ export default function Workflow() {
             const Icon = step.icon;
             const isSelected = selectedStep === idx;
             return (
-              <div
+              <Card2
                 key={idx}
                 onClick={() => setSelectedStep(idx)}
                 className={`p-5 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between group ${
@@ -142,7 +143,7 @@ export default function Workflow() {
                     }`}
                   />
                 </div>
-              </div>
+              </Card2>
             );
           })}
         </div>

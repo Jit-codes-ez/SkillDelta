@@ -13,11 +13,6 @@ export default function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Column: Hero Narrative */}
           <div className="lg:col-span-5 flex flex-col items-start text-left">
-            {/* Small Eyebrow Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[#FFF5E4] text-[#850E35] border border-[#850E35]/20 mb-6 shadow-2xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#E36A6A] animate-pulse" />
-              <span>AI/ML • CURRICULUM INTELLIGENCE • INDUSTRY ANALYTICS</span>
-            </div>
 
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#850E35] tracking-tight leading-[1.12] mb-6">
@@ -44,38 +39,6 @@ export default function Hero() {
                 <span>Analyze a Curriculum</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </a>
-
-              <a
-                href="#workflow"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#FFF5E4] hover:bg-[#F5E4CE] text-[#850E35] font-semibold text-sm border border-[#850E35]/25 shadow-xs hover:border-[#850E35]/40 transition-all w-full sm:w-auto"
-              >
-                <BookOpen className="w-4 h-4 text-[#850E35]/70" />
-                <span>Explore How It Works</span>
-              </a>
-            </div>
-
-            {/* Small Trust Line */}
-            <div className="pt-6 border-t border-[#850E35]/15 w-full">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-[#850E35]/60 mb-2">
-                Core Research Methodologies
-              </div>
-              <div className="flex flex-wrap items-center gap-2 text-xs text-[#850E35] font-medium">
-                <span className="px-2.5 py-1 rounded-md bg-[#FFF5E4] border border-[#850E35]/20">
-                  NLP
-                </span>
-                <span className="text-[#850E35]/40">•</span>
-                <span className="px-2.5 py-1 rounded-md bg-[#FFF5E4] border border-[#850E35]/20">
-                  Semantic Embeddings
-                </span>
-                <span className="text-[#850E35]/40">•</span>
-                <span className="px-2.5 py-1 rounded-md bg-[#FFF5E4] border border-[#850E35]/20">
-                  Skill Intelligence
-                </span>
-                <span className="text-[#850E35]/40">•</span>
-                <span className="px-2.5 py-1 rounded-md bg-[#FFF5E4] border border-[#850E35]/20">
-                  RAG
-                </span>
-              </div>
             </div>
           </div>
 

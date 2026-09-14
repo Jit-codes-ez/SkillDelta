@@ -1,5 +1,6 @@
 import React from 'react';
-import { BookOpen, Building2, GitCompareArrows, ArrowRight, ArrowDown } from 'lucide-react';
+import { BookOpen, Building2, GitCompareArrows, ArrowRight } from 'lucide-react';
+import Card1 from '../components/Card1';
 
 const CARDS = [
   {
@@ -61,9 +62,14 @@ export default function ProblemSection() {
           {CARDS.map((card, idx) => {
             const Icon = card.icon;
             return (
-              <div
+              <Card1
                 key={idx}
-                className="bg-white rounded-2xl border border-[#850E35]/15 p-7 shadow-xs hover:shadow-md hover:border-[#850E35]/30 transition-all duration-300 flex flex-col justify-between group relative"
+                className="p-7 flex flex-col justify-between group relative"
+                theme={
+                  card.color === 'rose'
+                    ? { hue: 0, saturation: 68, lightness: 65 }
+                    : { hue: 340, saturation: 81, lightness: 29 }
+                }
               >
                 <div>
                   {/* Step Header */}
@@ -104,47 +110,9 @@ export default function ProblemSection() {
                   <span>{card.metrics}</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#850E35]/40 group-hover:text-[#850E35] group-hover:translate-x-1 transition-all" />
                 </div>
-              </div>
+              </Card1>
             );
           })}
-        </div>
-
-        {/* Visual Progression Strip: Curriculum ↓ Changing Industry ↓ Skill Delta */}
-        <div className="mt-12 p-5 rounded-2xl bg-white border border-[#850E35]/15 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-xs font-semibold text-[#850E35] shadow-2xs">
-          <div className="flex items-center gap-2">
-            <span className="w-7 h-7 rounded-lg bg-[#850E35] text-[#FFFBF1] flex items-center justify-center font-bold">
-              1
-            </span>
-            <span>Academic Curriculum</span>
-          </div>
-
-          <div className="hidden sm:block text-[#850E35]/30">
-            <ArrowRight className="w-4 h-4" />
-          </div>
-          <div className="sm:hidden text-[#850E35]/30">
-            <ArrowDown className="w-4 h-4" />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="w-7 h-7 rounded-lg bg-[#FFF5E4] text-[#850E35] border border-[#850E35]/20 flex items-center justify-center font-bold">
-              2
-            </span>
-            <span>Changing Industry Demand</span>
-          </div>
-
-          <div className="hidden sm:block text-[#850E35]/30">
-            <ArrowRight className="w-4 h-4" />
-          </div>
-          <div className="sm:hidden text-[#850E35]/30">
-            <ArrowDown className="w-4 h-4" />
-          </div>
-
-          <div className="flex items-center gap-2 text-[#E36A6A]">
-            <span className="w-7 h-7 rounded-lg bg-[#E36A6A] text-[#FFFBF1] flex items-center justify-center font-bold">
-              3
-            </span>
-            <span className="font-bold">Measurable Skill Delta</span>
-          </div>
         </div>
       </div>
     </section>
