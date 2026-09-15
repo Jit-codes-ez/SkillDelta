@@ -2,12 +2,18 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,jsx}",
   ],
   theme: {
     extend: {
       colors: {
         canvas: '#FFFBF1',
+        background: '#FFFBF1',
+        primary: {
+          DEFAULT: '#850E35',
+          foreground: '#FFFBF1',
+        },
+        'primary-foreground': '#FFFBF1',
         brand: {
           primary: '#850E35',
           'primary-dark': '#6F0A2B',
@@ -28,12 +34,17 @@ export default {
       animation: {
         'pulse-subtle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'float-slow': 'float 6s ease-in-out infinite',
+        'rippling': 'rippling var(--duration, 600ms) ease-out',
       },
       keyframes: {
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-6px)' },
-        }
+        },
+        rippling: {
+          '0%': { opacity: '1' },
+          '100%': { transform: 'scale(2)', opacity: '0' },
+        },
       }
     },
   },

@@ -178,7 +178,7 @@ export function TiltCard({
         'bg-white border border-[#850E35]/15 rounded-2xl',
         'flex flex-col justify-between text-[#850E35]',
         'min-h-52 w-full h-full p-6',
-        'hover:shadow-xl hover:shadow-[#850E35]/10 hover:border-[#850E35]/40 hover:scale-[1.02]',
+        'hover:bg-[#FFF2D0] hover:shadow-xl hover:shadow-[#E36A6A]/25 hover:border-[#E36A6A]/70 hover:scale-[1.02]',
         'transition-all duration-300 ease-out',
         className
       )}

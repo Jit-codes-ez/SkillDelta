@@ -1,6 +1,8 @@
 import React from 'react';
 import { Building2, BookOpen, Workflow, FlaskConical, ArrowRight } from 'lucide-react';
 import Card1 from '../components/Card1';
+import TextAnimate from '@/components/TextAnimation';
+import Reveal from '../components/ScrollAnimation';
 const AUDIENCES = [
   {
     title: 'Universities & Institutional Leadership',
@@ -38,7 +40,7 @@ const AUDIENCES = [
 
 export default function WhoIsItFor() {
   return (
-    <section id="about" className="py-24 bg-[#FFFBF1] border-b border-[#850E35]/15 relative">
+    <section id="about" className="min-h-screen flex flex-col justify-center py-20 bg-[#FFF5E4] border-b border-[#850E35]/15 relative scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-16">
@@ -47,7 +49,12 @@ export default function WhoIsItFor() {
             Target Stakeholders
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#850E35] tracking-tight leading-tight">
-            Who is <span className="text-[#E36A6A]">SkillDelta</span> for?
+            <TextAnimate animation='slideLeft' by='character'>
+              Who is  
+            </TextAnimate> {' '}
+            <TextAnimate animation='slideLeft' by='character' delay = {0.2}>
+              <span className="text-[#E36A6A]"> SkillDelta</span> for?
+            </TextAnimate>
           </h2>
           <p className="mt-4 text-base sm:text-lg text-[#850E35]/80 leading-relaxed">
             Tailored specifically for educational leaders and researchers dedicated to bridging pedagogical rigor with modern production engineering reality.
@@ -59,34 +66,35 @@ export default function WhoIsItFor() {
           {AUDIENCES.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <Card1
-                key={idx}
-                className="bg-white rounded-2xl border border-[#850E35]/15 p-6 flex flex-col justify-between hover:border-[#850E35]/40 hover:shadow-sm transition-all group"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-11 h-11 rounded-xl bg-[#FFF5E4] border border-[#850E35]/15 flex items-center justify-center text-[#850E35] group-hover:bg-[#850E35] group-hover:text-[#FFFBF1] transition-colors shadow-2xs">
-                      <Icon className="w-5 h-5" />
+              <Reveal key={idx} delay={idx * 100} duration={700}>
+                <Card1
+                  className="bg-white rounded-2xl border border-[#850E35]/15 p-6 flex flex-col justify-between card-interactive group h-full"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-11 h-11 rounded-xl bg-[#FFF5E4] border border-[#850E35]/15 flex items-center justify-center text-[#850E35] group-hover:bg-[#850E35] group-hover:text-[#FFFBF1] transition-colors shadow-2xs">
+                        <Icon className="w-5 h-5 card-icon" />
+                      </div>
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#FFF5E4] border border-[#850E35]/20 text-[#850E35]">
+                        {item.badge}
+                      </span>
                     </div>
-                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#FFF5E4] border border-[#850E35]/20 text-[#850E35]">
-                      {item.badge}
-                    </span>
+
+                    <h3 className="text-base font-bold text-[#850E35] mb-2 leading-snug group-hover:text-[#E36A6A] transition-colors">
+                      {item.short}
+                    </h3>
+
+                    <p className="text-xs text-[#850E35]/80 leading-relaxed">
+                      {item.description}
+                    </p>
                   </div>
 
-                  <h3 className="text-base font-bold text-[#850E35] mb-2 leading-snug group-hover:text-[#E36A6A] transition-colors">
-                    {item.short}
-                  </h3>
-
-                  <p className="text-xs text-[#850E35]/80 leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-
-                <div className="mt-6 pt-3 border-t border-[#850E35]/10 flex items-center justify-between text-xs text-[#850E35]/60 font-medium">
-                  <span>Stakeholder 0{idx + 1}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#850E35]/30 group-hover:text-[#850E35] group-hover:translate-x-0.5 transition-all" />
-                </div>
-              </Card1>
+                  <div className="mt-6 pt-3 border-t border-[#850E35]/10 flex items-center justify-between text-xs text-[#850E35]/60 font-medium">
+                    <span>Stakeholder 0{idx + 1}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#850E35]/30 group-hover:text-[#850E35] group-hover:translate-x-0.5 transition-all" />
+                  </div>
+                </Card1>
+              </Reveal>
             );
           })}
         </div>

@@ -271,12 +271,12 @@ export function GlowHoverCard({
       {...props}
     >
       {/* Card Content */}
-      <div className="relative z-10">
+      <div className="relative z-10 w-full">
         {(badge || Icon) && (
           <div className="flex items-center justify-between mb-4">
             {Icon && (
               <div className="w-11 h-11 rounded-xl bg-[#FFF5E4] border border-[#850E35]/15 flex items-center justify-center text-[#850E35] shadow-2xs">
-                {typeof Icon === 'function' ? <Icon className="w-5 h-5 text-[#850E35]" /> : Icon}
+                {typeof Icon === 'function' ? <Icon className="w-5 h-5 text-[#850E35] card-icon" /> : Icon}
               </div>
             )}
             {badge && (

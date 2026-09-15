@@ -62,3 +62,73 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #850E35;
 }
+
+/* Native CSS Scroll-Driven Animation (Appear with clip-path) */
+@keyframes appear {
+  from {
+    opacity: 0;
+    clip-path: inset(100% 100% 0 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Ripple Button Effect */
+@keyframes rippling {
+  0% {
+    opacity: 1;
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-rippling {
+  animation: rippling var(--duration, 600ms) ease-out;
+}
+
+@supports (animation-timeline: view()) {
+  .scroll-appear,
+  .animate-on-scroll {
+    animation: appear linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 40%;
+  }
+}
+
+/* Card Interactive Hover State */
+.card-interactive {
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease;
+  border-left-width: 4px;
+  border-left-color: transparent;
+}
+
+.card-interactive:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 32px -8px rgba(133, 14, 53, 0.16), 0 4px 12px -2px rgba(227, 106, 106, 0.12);
+  border-left-color: #E36A6A;
+}
+
+.card-interactive .card-icon {
+  transition: transform 180ms ease;
+  transform-origin: center center;
+}
+
+.card-interactive:hover .card-icon {
+  transform: scale(1.1) rotate(-4deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-interactive,
+  .card-interactive:hover,
+  .card-interactive .card-icon,
+  .card-interactive:hover .card-icon {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
