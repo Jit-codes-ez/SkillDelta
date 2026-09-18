@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import SkillNetwork from './SkillNetwork';
 import { CardGlare } from '@/components/CardGlare';
 import { TextAnimate } from '@/components/TextAnimation';
@@ -88,9 +89,11 @@ export default function Hero() {
             </p>
 
             {/* Action Buttons */}
-            <Button1 href="/signup">
+            <Link to = "signup">
+            <Button1>
               Analyze a Curriculum
             </Button1>
+            </Link>
           </div>
 
           {/* Right Column: Signature Hero Visual Network with CardGlare */}

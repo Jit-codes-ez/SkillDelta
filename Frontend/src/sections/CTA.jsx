@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BookOpen, ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { TextAnimate } from '@/components/TextAnimation';
 import { Button1 } from '@/components/Button1';
@@ -95,12 +96,13 @@ export default function CTA() {
 
         {/* Action Buttons: Responsive full-width on mobile, side-by-side on tablet/desktop */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 w-full sm:w-auto max-w-xs sm:max-w-none mx-auto">
+          <Link to = "/signup">
           <Button1
-            href="/signup"
             className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 sm:py-4 rounded-xl bg-[#FFF5E4] hover:bg-[#FFFBF1] active:scale-95 text-[#850E35] font-bold text-sm shadow-lg shadow-black/25 hover:shadow-xl transition-all group"
           >
             Analyze a Curriculum
           </Button1>
+          </Link>
           <Button2
             href="#workflow"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 sm:py-4 rounded-xl bg-[#850E35]/60 hover:bg-[#850E35] active:scale-95 text-[#FFFBF1] font-semibold text-sm border border-[#FFF5E4]/30 hover:border-[#FFF5E4]/50 transition-all group"
