@@ -10,6 +10,7 @@ import {
   ArrowRight,
   Search,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { TextAnimate } from '@/components/TextAnimation';
 import { Card } from '@/components/Card1';
 import { Button1 } from '@/components/Button1';
@@ -238,13 +239,14 @@ export default function Documentation() {
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
+            <Link to = "/faq">
             <Button1
-              href="/faq"
               variant="default"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-[#FFFBF1] bg-[#850E35] hover:bg-[#6F0A2B] shadow-xs cursor-pointer"
             >
               <span>Visit FAQ & Support</span>
             </Button1>
+            </Link>
           </div>
         </div>
       </div>
