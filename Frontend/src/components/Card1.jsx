@@ -265,9 +265,10 @@ export function GlowHoverCard({
       ref={containerRef}
       className={cn(
         'relative rounded-2xl border border-[#850E35]/15 bg-white p-6 transition-all duration-300',
-        'shadow-xs hover:shadow-md hover:border-[#850E35]/40 overflow-hidden text-[#850E35]',
+        'shadow-xs hover:shadow-md hover:border-[#850E35]/40 overflow-hidden text-[#850E35] card-interactive',
         className
       )}
+      data-reveal=""
       {...props}
     >
       {/* Card Content */}
@@ -332,3 +333,7 @@ export default function Card1(props) {
   }
   return <GlowHoverCard {...props} />;
 }
+
+export const Card = Card1;
+export { Card1 };
+

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 const variantStyles = {
@@ -14,15 +15,18 @@ const variantStyles = {
     'border-transparent bg-transparent text-[#850E35]/80 hover:text-[#850E35] hover:bg-[#FFF5E4] shadow-none active:scale-95 px-4 py-2 rounded-xl font-medium',
   nav:
     'border-transparent bg-transparent text-[#850E35]/80 hover:text-[#850E35] hover:bg-[#FFF5E4] shadow-none text-xs sm:text-sm font-medium px-3.5 py-1.5 rounded-full active:scale-95',
+  white:
+    'border border-[#850E35]/20 bg-white text-[#850E35] hover:bg-[#FFF5E4] shadow-2xs active:scale-95 px-3.5 py-1.5 rounded-xl font-semibold text-xs',
 };
 
 const defaultRippleColors = {
-  default: '#FFF5E4',
-  primary: '#FFF5E4',
-  secondary: 'rgba(133, 14, 53, 0.16)',
-  outline: 'rgba(133, 14, 53, 0.16)',
-  ghost: 'rgba(133, 14, 53, 0.18)',
-  nav: 'rgba(133, 14, 53, 0.18)',
+  default: 'rgba(255, 251, 241, 0.45)',
+  primary: 'rgba(255, 251, 241, 0.45)',
+  secondary: 'rgba(133, 14, 53, 0.22)',
+  outline: 'rgba(133, 14, 53, 0.22)',
+  ghost: 'rgba(133, 14, 53, 0.22)',
+  nav: 'rgba(133, 14, 53, 0.22)',
+  white: 'rgba(133, 14, 53, 0.22)',
 };
 
 export const RippleButton = React.forwardRef(
@@ -41,42 +45,50 @@ export const RippleButton = React.forwardRef(
     ref
   ) => {
     const [buttonRipples, setButtonRipples] = useState([]);
+    const navigate = useNavigate();
     const activeRippleColor = rippleColor || defaultRippleColors[variant] || '#FFF5E4';
-
-    const handleClick = (event) => {
-      createRipple(event);
-      onClick?.(event);
-    };
 
     const createRipple = (event) => {
       const button = event.currentTarget;
       const rect = button.getBoundingClientRect();
-      const size = Math.max(rect.width, rect.height);
-      const x = event.clientX - rect.left - size / 2;
-      const y = event.clientY - rect.top - size / 2;
+      const size = Math.max(rect.width, rect.height) * 2;
+      const hasCoords =
+        event &&
+        event.clientX !== undefined &&
+        (event.clientX !== 0 || event.clientY !== 0);
+      const x = (hasCoords ? event.clientX - rect.left : rect.width / 2) - size / 2;
+      const y = (hasCoords ? event.clientY - rect.top : rect.height / 2) - size / 2;
 
-      const newRipple = { x, y, size, key: Date.now() };
+      const key = `${Date.now()}-${Math.random()}`;
+      const newRipple = { x, y, size, key };
       setButtonRipples((prevRipples) => [...prevRipples, newRipple]);
+
+      const animDuration = parseInt(duration, 10) || 600;
+      setTimeout(() => {
+        setButtonRipples((prevRipples) =>
+          prevRipples.filter((ripple) => ripple.key !== key)
+        );
+      }, animDuration);
     };
 
-    useEffect(() => {
-      let timeout = null;
+    const handleClick = (event) => {
+      createRipple(event);
+      onClick?.(event);
 
-      if (buttonRipples.length > 0) {
-        const lastRipple = buttonRipples[buttonRipples.length - 1];
-        timeout = setTimeout(() => {
-          setButtonRipples((prevRipples) =>
-            prevRipples.filter((ripple) => ripple.key !== lastRipple.key)
-          );
-        }, parseInt(duration, 10));
-      }
+      // Handle client-side routing with tactile ripple delay for cross-page links
+      const isModifiedClick = event.metaKey || event.altKey || event.ctrlKey || event.shiftKey;
+      const isPlainLeftClick = event.button === 0 && !isModifiedClick;
 
-      return () => {
-        if (timeout !== null) {
-          clearTimeout(timeout);
+      if (href && isPlainLeftClick && props.target !== '_blank') {
+        const isInternalRoute = href.startsWith('/') && !href.startsWith('/#');
+        if (isInternalRoute && navigate) {
+          event.preventDefault();
+          setTimeout(() => {
+            navigate(href);
+          }, 220);
         }
-      };
-    }, [buttonRipples, duration]);
+      }
+    };
 
     const Component = href ? 'a' : 'button';
 
@@ -99,7 +111,7 @@ export const RippleButton = React.forwardRef(
         <span className="pointer-events-none absolute inset-0 overflow-hidden">
           {buttonRipples.map((ripple) => (
             <span
-              className="animate-rippling absolute rounded-full opacity-35 pointer-events-none"
+              className="animate-rippling absolute rounded-full pointer-events-none"
               key={ripple.key}
               style={{
                 width: `${ripple.size}px`,
@@ -121,4 +133,5 @@ export const RippleButton = React.forwardRef(
 RippleButton.displayName = 'RippleButton';
 
 export const Button2 = RippleButton;
+export const Button = RippleButton;
 export default RippleButton;

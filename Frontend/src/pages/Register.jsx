@@ -11,6 +11,9 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from 'motion/react';
+import { TextAnimation } from "@/components/TextAnimation";
+import { CardGlare } from "@/components/CardGlare";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -112,75 +115,120 @@ export default function Register() {
       <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
 
         <div className="grid min-h-[calc(100vh-160px)] items-center gap-10 lg:grid-cols-[1fr_0.9fr]">
-            {/* =====================================================
-                LEFT CONTENT
-            ====================================================== */}
-            <div className="hidden lg:block" data-reveal>
+          {/* =====================================================
+              LEFT CONTENT (SIGN UP)
+          ====================================================== */}
+          <div className="hidden lg:block" data-reveal>
 
-              <div className="mb-5 flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#E36A6A]" />
+            {/* Eyebrow badge */}
+            <div className="mb-5 flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#E36A6A]" />
 
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#850E35]/45">
-                  Skill Intelligence Platform
-                </span>
-              </div>
-
-              <h1 className="max-w-xl text-5xl font-bold leading-[1.05] tracking-tight xl:text-6xl">
-                Build the skills
-                <br />
-
-                <span className="text-[#E36A6A]">
-                  your career needs.
-                </span>
-              </h1>
-
-              <p className="mt-6 max-w-lg text-sm leading-7 text-[#850E35]/55">
-                Create your SkillDelta account and start building
-                a personalized learning roadmap based on your
-                current skills and career goals.
-              </p>
-
-              {/* FEATURES */}
-              <div className="mt-9 space-y-5">
-
-                <Feature
-                  icon={<Sparkles size={16} />}
-                  title="Personalized skill analysis"
-                  description="Understand where you stand and what to learn next."
-                />
-
-                <Feature
-                  icon={<BriefcaseBusiness size={16} />}
-                  title="Career-focused roadmap"
-                  description="Connect your learning progress with your target role."
-                />
-
-                <Feature
-                  icon={<ShieldCheck size={16} />}
-                  title="Track your progress"
-                  description="Keep your skills, gaps and career journey in one place."
-                />
-
-              </div>
-
-              {/* VERSION */}
-              <div className="mt-12 flex items-center gap-3 text-[9px] font-semibold uppercase tracking-[0.18em] text-[#850E35]/30">
-
-                <span className="h-px w-10 bg-[#850E35]/15" />
-
-                Research v1.2
-
-                <span className="h-px w-10 bg-[#850E35]/15" />
-
-              </div>
-
+              <TextAnimation
+                as="span"
+                animation="fadeIn"
+                by="character"
+                duration={0.4}
+                className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#850E35]/45"
+              >
+                Skill Intelligence Platform
+              </TextAnimation>
             </div>
+
+            {/* Main heading */}
+            <div className="max-w-xl text-5xl font-bold leading-[1.05] tracking-tight xl:text-6xl text-[#850E35]">
+              <TextAnimation
+                as="h1"
+                animation="slideUp"
+                by="word"
+                delay={0.15}
+                duration={0.4}
+              >
+                Build the skills
+              </TextAnimation>
+
+              <TextAnimation
+                as="span"
+                animation="slideUp"
+                by="word"
+                delay={0.3}
+                duration={0.4}
+                className="block text-[#E36A6A]"
+              >
+                your career needs.
+              </TextAnimation>
+            </div>
+
+            {/* Subtitle / Description */}
+            <TextAnimation
+              as="p"
+              animation="fadeIn"
+              by="word"
+              delay={0.45}
+              duration={0.5}
+              className="mt-6 max-w-lg text-sm leading-7 text-[#850E35]/55"
+            >
+              Create your SkillDelta account and start building a personalized learning
+              roadmap based on your current skills and career goals.
+            </TextAnimation>
+
+            {/* FEATURES */}
+            <motion.div
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: { delayChildren: 0.6, staggerChildren: 0.12 },
+                },
+              }}
+              className="mt-9 space-y-5"
+            >
+              {[
+                {
+                  icon: <Sparkles size={16} />,
+                  title: 'Personalized skill analysis',
+                  description: 'Understand where you stand and what to learn next.',
+                },
+                {
+                  icon: <BriefcaseBusiness size={16} />,
+                  title: 'Career-focused roadmap',
+                  description: 'Connect your learning progress with your target role.',
+                },
+                {
+                  icon: <ShieldCheck size={16} />,
+                  title: 'Track your progress',
+                  description: 'Keep your skills, gaps and career journey in one place.',
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  variants={{
+                    hidden: { opacity: 0, y: 16 },
+                    show: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.4, ease: 'easeOut' },
+                    },
+                  }}
+                >
+                  <Feature
+                    icon={item.icon}
+                    title={item.title}
+                    description={item.description}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+
+          </div>
 
             {/* =====================================================
                 REGISTRATION CARD
             ====================================================== */}
             <div className="mx-auto w-full max-w-[520px]" data-reveal>
-
+              <CardGlare>
               <div className="rounded-3xl border border-[#850E35]/10 bg-white p-6 shadow-[0_20px_60px_rgba(133,14,53,0.08)] sm:p-8">
 
                 {/* CARD HEADER */}
@@ -401,7 +449,7 @@ export default function Register() {
                     Already have an account?{" "}
 
                     <Link
-                      to="/login"
+                      to="/signin"
                       className="font-bold text-[#850E35] hover:text-[#E36A6A]"
                     >
                       Sign in
@@ -415,21 +463,14 @@ export default function Register() {
 
               {/* SECURITY MESSAGE */}
               <div className="mt-4 flex items-center justify-center gap-2 text-[9px] font-medium uppercase tracking-wider text-[#850E35]/35">
-
                 <ShieldCheck size={12} />
-
                 Your account information is protected
-
               </div>
-
+            </CardGlare>
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </div>
   );
 }

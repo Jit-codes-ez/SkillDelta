@@ -57,11 +57,16 @@ export function Tilt({
   return (
     <motion.div
       ref={ref}
+      data-tilt-card="true"
+      {...props}
       className={className}
-      style={{ transformStyle: 'preserve-3d', ...style, transform }}
+      style={{
+        transformStyle: 'preserve-3d',
+        ...style,
+        transform,
+      }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      {...props}
     >
       {children}
     </motion.div>
@@ -167,9 +172,12 @@ export function TiltCard({
   circleClassName,
   circleSize = 600,
   rotationFactor = 11,
+  onClick,
   ...props
 }) {
-  const content = (
+  const cleanClassName = className ? className.replace(/\bcard-interactive\b/g, '').trim() : '';
+
+  const cardContent = (
     <Tilt
       rotationFactor={rotationFactor}
       {...tiltProps}
@@ -178,9 +186,9 @@ export function TiltCard({
         'bg-white border border-[#850E35]/15 rounded-2xl',
         'flex flex-col justify-between text-[#850E35]',
         'min-h-52 w-full h-full p-6',
-        'hover:bg-[#FFF2D0] hover:shadow-xl hover:shadow-[#E36A6A]/25 hover:border-[#E36A6A]/70 hover:scale-[1.02]',
-        'transition-all duration-300 ease-out',
-        className
+        'hover:bg-[#FFF2D0] hover:shadow-xl hover:shadow-[#E36A6A]/25 hover:border-[#E36A6A]/70',
+        'transition-[background-color,border-color,box-shadow] duration-300 ease-out',
+        cleanClassName
       )}
       {...(!href ? props : {})}
     >
@@ -248,15 +256,22 @@ export function TiltCard({
     </Tilt>
   );
 
-  if (href) {
-    return (
-      <a href={href} className="block cursor-pointer h-full" {...props}>
-        {content}
-      </a>
-    );
-  }
-
-  return content;
+  return (
+    <div
+      className="card-interactive h-full w-full"
+      data-tilt-wrapper="true"
+      data-reveal-card="true"
+      onClick={!href ? onClick : undefined}
+    >
+      {href ? (
+        <a href={href} className="block cursor-pointer h-full" onClick={onClick} {...props}>
+          {cardContent}
+        </a>
+      ) : (
+        cardContent
+      )}
+    </div>
+  );
 }
 
 /**

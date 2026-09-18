@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SkillNetwork from './SkillNetwork';
+import { CardGlare } from '@/components/CardGlare';
 import { TextAnimate } from '@/components/TextAnimation';
 import { Button1 } from '@/components/Button1';
 
@@ -47,8 +48,8 @@ export default function Hero() {
       <div className="absolute inset-0 bg-technical-dots opacity-40 pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[720px] h-[220px] sm:h-[280px] lg:h-[360px] bg-gradient-to-tr from-[#E36A6A]/15 via-[#FFF5E4]/40 to-transparent blur-3xl pointer-events-none -z-10" />
 
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+      <div className="w-full max-w-7xl xl:max-w-[1360px] 2xl:max-w-[1420px] mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 xl:gap-10 items-center">
           {/* Left Column: Hero Narrative */}
           <div className="lg:col-span-5 flex flex-col items-start text-left min-w-0">
 
@@ -92,9 +93,17 @@ export default function Hero() {
             </Button1>
           </div>
 
-          {/* Right Column: Signature Hero Visual Network */}
-          <div className="lg:col-span-7 w-full min-w-0 overflow-hidden">
-            <SkillNetwork />
+          {/* Right Column: Signature Hero Visual Network with CardGlare */}
+          <div className="lg:col-span-7 w-full min-w-0">
+            <CardGlare
+              className="shadow-xl shadow-[#850E35]/10"
+              innerClassName="p-2 sm:p-3.5 bg-[#FFFBF1]"
+              borderWidth={2.5}
+              duration={6}
+              shineColor={['#850E35', '#E36A6A', '#FFFBF1']}
+            >
+              <SkillNetwork />
+            </CardGlare>
           </div>
         </div>
       </div>

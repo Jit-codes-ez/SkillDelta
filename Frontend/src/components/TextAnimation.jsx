@@ -352,26 +352,38 @@ const TextAnimateBase = ({
         {...props}
       >
         {accessible && typeof children === 'string' && <span className="sr-only">{children}</span>}
-        {segments.map((segment, i) => (
-          <motion.span
-            key={`${by}-${segment}-${i}`}
-            variants={finalVariants.item}
-            custom={i * (staggerTimings[by] || 0.03)}
-            className={cn(
-              by === 'line' ? 'block' : 'inline-block whitespace-pre',
-              by === 'character' && '',
-              extractedClassName,
-              segmentClassName
-            )}
-            aria-hidden={accessible ? true : undefined}
-          >
-            {segment}
-          </motion.span>
-        ))}
+        {segments.map((segment, i) => {
+          const isSpace = /^\s+$/.test(segment);
+          if (isSpace && by === 'word') {
+            return (
+              <span key={`${by}-space-${i}`} className="inline">
+                {segment}
+              </span>
+            );
+          }
+
+          return (
+            <motion.span
+              key={`${by}-${segment}-${i}`}
+              variants={finalVariants.item}
+              custom={i * (staggerTimings[by] || 0.03)}
+              className={cn(
+                by === 'line' ? 'block' : 'inline-block',
+                by === 'character' ? 'whitespace-pre' : '',
+                extractedClassName,
+                segmentClassName
+              )}
+              aria-hidden={accessible ? true : undefined}
+            >
+              {segment}
+            </motion.span>
+          );
+        })}
       </MotionComponent>
     </AnimatePresence>
   );
 };
 
 export const TextAnimate = memo(TextAnimateBase);
+export const TextAnimation = memo(TextAnimateBase);
 export default TextAnimate;

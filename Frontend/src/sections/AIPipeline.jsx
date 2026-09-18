@@ -80,7 +80,7 @@ export default function AIPipeline() {
             return (
               <Card2
                 key={idx}
-                className="bg-white rounded-2xl border border-[#850E35]/15 p-5 flex flex-col justify-between card-interactive group relative overflow-visible h-full"
+                className="bg-white rounded-2xl border border-[#850E35]/15 p-5 flex flex-col justify-between group relative overflow-visible h-full"
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">

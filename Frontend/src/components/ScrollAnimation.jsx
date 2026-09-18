@@ -55,7 +55,7 @@ export default function Reveal({
     if (!container) return;
 
     if (prefersReducedMotion) {
-      const allTargets = container.querySelectorAll('section, .card-interactive, [data-reveal]');
+      const allTargets = container.querySelectorAll('section, .card-interactive, [data-reveal], [data-reveal-card]');
       allTargets.forEach((el) => {
         el.classList.remove('reveal-init');
         el.classList.add('reveal-visible');
@@ -67,7 +67,7 @@ export default function Reveal({
 
     const resolveVariant = (el, idx) => {
       if (el.dataset.revealVariant) return;
-      if (el.classList.contains('card-interactive')) {
+      if (el.classList.contains('card-interactive') || el.hasAttribute('data-reveal-card')) {
         const rect = el.getBoundingClientRect();
         const parentRect = el.parentElement?.getBoundingClientRect();
         if (parentRect && parentRect.width > 0) {
@@ -83,7 +83,7 @@ export default function Reveal({
 
     const computeStagger = () => {
       const groups = new Map();
-      const cards = container.querySelectorAll('.card-interactive');
+      const cards = container.querySelectorAll('.card-interactive, [data-reveal-card]');
       cards.forEach((el) => {
         const rect = el.getBoundingClientRect();
         const rowKey = Math.round((rect.top + window.scrollY) / 24);
@@ -108,10 +108,14 @@ export default function Reveal({
       const rect = el.getBoundingClientRect();
       const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
 
+      el.classList.add('reveal-init');
+
       if (inViewport) {
-        el.classList.add('reveal-visible');
-      } else {
-        el.classList.add('reveal-init');
+        const baseDelay = el.dataset.revealDelay ? parseInt(el.dataset.revealDelay, 10) : idx * 70;
+        setTimeout(() => {
+          el.classList.add('reveal-visible');
+          el.classList.remove('reveal-init');
+        }, 40 + baseDelay);
       }
 
       observer.observe(el);
@@ -125,18 +129,23 @@ export default function Reveal({
             el.classList.add('reveal-visible');
             el.classList.remove('reveal-init');
           } else {
-            el.classList.remove('reveal-visible');
-            el.classList.add('reveal-init');
+            const rect = el.getBoundingClientRect();
+            if (rect.top > window.innerHeight + 80 || rect.bottom < -80) {
+              el.classList.remove('reveal-visible');
+              el.classList.add('reveal-init');
+            }
           }
         });
       },
-      { threshold, rootMargin }
+      { threshold, rootMargin: '0px 0px -40px 0px' }
     );
 
     const queryAndObserveAll = () => {
       const sections = container.querySelectorAll('section');
       sections.forEach((sec) => {
-        const cards = sec.querySelectorAll('.card-interactive');
+        const cards = sec.querySelectorAll(
+          '.card-interactive, [data-reveal], [data-reveal-card]'
+        );
         if (cards.length > 0) {
           const header = sec.querySelector('.max-w-3xl, [data-section-header]');
           if (header && !header.classList.contains('card-interactive')) {
@@ -148,7 +157,9 @@ export default function Reveal({
         }
       });
 
-      const standalone = container.querySelectorAll('.card-interactive, [data-reveal]');
+      const standalone = container.querySelectorAll(
+        '.card-interactive, [data-reveal], [data-reveal-card]'
+      );
       standalone.forEach((el, i) => initAndObserveElement(el, observer, i));
 
       requestAnimationFrame(computeStagger);
@@ -170,6 +181,13 @@ export default function Reveal({
       handleMove = (e) => {
         const card = e.target.closest('.card-interactive');
         if (!card || !container.contains(card)) return;
+        if (
+          card.hasAttribute('data-tilt-wrapper') ||
+          card.hasAttribute('data-tilt-card') ||
+          card.querySelector?.('[data-tilt-card]')
+        ) {
+          return;
+        }
         const rect = card.getBoundingClientRect();
         const px = (e.clientX - rect.left) / rect.width;
         const py = (e.clientY - rect.top) / rect.height;

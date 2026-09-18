@@ -109,7 +109,7 @@ export default function Workflow() {
               <Card2
                 key={idx}
                 onClick={() => setSelectedStep(idx)}
-                className={`bg-white rounded-2xl border border-[#850E35]/15 p-5 flex flex-col justify-between card-interactive group relative overflow-visible cursor-pointer h-full ${
+                className={`bg-white rounded-2xl border border-[#850E35]/15 p-5 flex flex-col justify-between group relative overflow-visible cursor-pointer h-full ${
                   isSelected ? 'border-l-[#850E35] shadow-md' : ''
                 }`}
               >

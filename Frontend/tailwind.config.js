@@ -35,6 +35,8 @@ export default {
         'pulse-subtle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'float-slow': 'float 6s ease-in-out infinite',
         'rippling': 'rippling var(--duration, 600ms) ease-out',
+        'shine': 'shine var(--duration, 14s) infinite linear',
+        'spin-glare': 'spin-glare var(--duration, 8s) linear infinite',
       },
       keyframes: {
         float: {
@@ -44,6 +46,15 @@ export default {
         rippling: {
           '0%': { opacity: '1' },
           '100%': { transform: 'scale(2)', opacity: '0' },
+        },
+        shine: {
+          '0%': { 'background-position': '0% 0%' },
+          '50%': { 'background-position': '100% 100%' },
+          'to': { 'background-position': '0% 0%' },
+        },
+        'spin-glare': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
         },
       }
     },

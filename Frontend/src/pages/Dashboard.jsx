@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import {
   ArrowUpRight,
   BriefcaseBusiness,
@@ -85,7 +85,75 @@ const recommendations = [
     time: "4h 10m",
   },
 ];
+const simulationRoles = {
+  "Full Stack Developer": {
+    description: "Build production-ready web applications across frontend and backend.",
+    baseScore: 76,
+    skills: {
+      "Spring Security": { current: 42, projected: 70, impact: 5 },
+      Docker: { current: 58, projected: 76, impact: 4 },
+      AWS: { current: 71, projected: 82, impact: 2 },
+      "Machine Learning": { current: 54, projected: 65, impact: 2 },
+    },
+    roadmap: [
+      "Spring Security",
+      "Docker",
+      "AWS",
+      "Production Deployment",
+    ],
+  },
 
+  "Java Backend Developer": {
+    description: "Focus on scalable Java services, APIs, security and deployment.",
+    baseScore: 76,
+    skills: {
+      "Spring Security": { current: 42, projected: 74, impact: 6 },
+      Docker: { current: 58, projected: 78, impact: 4 },
+      AWS: { current: 71, projected: 84, impact: 3 },
+      SQL: { current: 84, projected: 91, impact: 2 },
+    },
+    roadmap: [
+      "Spring Security",
+      "REST API Design",
+      "Docker",
+      "AWS",
+    ],
+  },
+
+  "AI / ML Engineer": {
+    description: "Develop intelligent systems using machine learning and production AI.",
+    baseScore: 76,
+    skills: {
+      "Machine Learning": { current: 54, projected: 78, impact: 7 },
+      Python: { current: 74, projected: 86, impact: 4 },
+      Docker: { current: 58, projected: 72, impact: 3 },
+      AWS: { current: 71, projected: 82, impact: 3 },
+    },
+    roadmap: [
+      "Machine Learning",
+      "Model Deployment",
+      "Docker",
+      "Cloud AI",
+    ],
+  },
+
+  "Frontend Developer": {
+    description: "Create modern, responsive and scalable user experiences.",
+    baseScore: 76,
+    skills: {
+      React: { current: 78, projected: 90, impact: 5 },
+      JavaScript: { current: 72, projected: 86, impact: 4 },
+      Docker: { current: 58, projected: 70, impact: 2 },
+      AWS: { current: 71, projected: 80, impact: 2 },
+    },
+    roadmap: [
+      "Advanced React",
+      "Performance Optimization",
+      "Docker",
+      "Cloud Deployment",
+    ],
+  },
+};
 function scrollToSection(id) {
   document.getElementById(id)?.scrollIntoView({
     behavior: "smooth",
@@ -134,7 +202,423 @@ function StatCard({ icon: Icon, label, value, change, description }) {
     </div>
   );
 }
+function CareerSimulationLab() {
+  const [targetRole, setTargetRole] = useState("Full Stack Developer");
+  const [selectedSkills, setSelectedSkills] = useState([
+    "Spring Security",
+    "Docker",
+  ]);
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [simulationRun, setSimulationRun] = useState(false);
+  const [addedToRoadmap, setAddedToRoadmap] = useState(false);
 
+  const role = simulationRoles[targetRole];
+
+  const simulatedScore = useMemo(() => {
+    if (!simulationRun) {
+      return role.baseScore;
+    }
+
+    const improvement = selectedSkills.reduce((total, skill) => {
+      return total + (role.skills[skill]?.impact || 0);
+    }, 0);
+
+    return Math.min(100, role.baseScore + improvement);
+  }, [role, selectedSkills, simulationRun]);
+
+  const toggleSkill = (skill) => {
+    setAddedToRoadmap(false);
+
+    setSelectedSkills((current) => {
+      if (current.includes(skill)) {
+        return current.filter((item) => item !== skill);
+      }
+
+      return [...current, skill];
+    });
+
+    setSimulationRun(false);
+  };
+
+  const runSimulation = () => {
+    if (selectedSkills.length === 0) {
+      return;
+    }
+
+    setIsSimulating(true);
+    setSimulationRun(false);
+    setAddedToRoadmap(false);
+
+    setTimeout(() => {
+      setIsSimulating(false);
+      setSimulationRun(true);
+    }, 900);
+  };
+
+  const handleRoleChange = (roleName) => {
+    setTargetRole(roleName);
+    setSimulationRun(false);
+    setAddedToRoadmap(false);
+
+    const firstTwoSkills = Object.keys(
+      simulationRoles[roleName].skills
+    ).slice(0, 2);
+
+    setSelectedSkills(firstTwoSkills);
+  };
+
+  const improvement = simulatedScore - role.baseScore;
+
+  return (
+    <section
+      id="career-simulation"
+      data-reveal
+      className="mb-7 scroll-mt-24 overflow-hidden rounded-2xl border border-[#850E35]/10 bg-white shadow-sm"
+    >
+      {/* Header */}
+      <div className="border-b border-[#850E35]/8 bg-[#FFFBF1] px-5 py-5 sm:px-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <div className="mb-2 flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#850E35] text-white">
+                <Sparkles size={15} />
+              </div>
+
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#E36A6A]">
+                Experimental Feature
+              </span>
+            </div>
+
+            <h2 className="text-xl font-bold tracking-tight text-[#850E35]">
+              Career Simulation Lab
+            </h2>
+
+            <p className="mt-1 max-w-2xl text-xs leading-5 text-[#850E35]/50">
+              What happens to your career readiness if you strengthen specific
+              skills? Build a scenario and simulate your next step.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 rounded-full border border-[#850E35]/10 bg-white px-3 py-1.5">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#E36A6A]" />
+
+            <span className="text-[9px] font-bold uppercase tracking-wider text-[#850E35]/55">
+              Frontend Simulation
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid lg:grid-cols-[0.8fr_1.2fr]">
+        {/* Controls */}
+        <div className="border-b border-[#850E35]/8 p-5 sm:p-6 lg:border-b-0 lg:border-r">
+          <div className="mb-6">
+            <label className="mb-2 block text-[10px] font-bold uppercase tracking-wider text-[#850E35]/45">
+              Target Career
+            </label>
+
+            <select
+              value={targetRole}
+              onChange={(event) => handleRoleChange(event.target.value)}
+              className="w-full rounded-xl border border-[#850E35]/12 bg-[#FFFBF1] px-3 py-3 text-xs font-bold text-[#850E35] outline-none transition focus:border-[#850E35]/35"
+            >
+              {Object.keys(simulationRoles).map((roleName) => (
+                <option key={roleName} value={roleName}>
+                  {roleName}
+                </option>
+              ))}
+            </select>
+
+            <p className="mt-2 text-[10px] leading-4 text-[#850E35]/45">
+              {role.description}
+            </p>
+          </div>
+
+          <div>
+            <div className="mb-3 flex items-center justify-between">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-[#850E35]/45">
+                Skills to Improve
+              </label>
+
+              <span className="text-[9px] font-bold text-[#E36A6A]">
+                {selectedSkills.length} selected
+              </span>
+            </div>
+
+            <div className="space-y-2">
+              {Object.entries(role.skills).map(([skill, data]) => {
+                const selected = selectedSkills.includes(skill);
+
+                return (
+                  <button
+                    key={skill}
+                    type="button"
+                    onClick={() => toggleSkill(skill)}
+                    className={`flex w-full items-center justify-between rounded-xl border p-3 text-left transition ${
+                      selected
+                        ? "border-[#850E35]/25 bg-[#FFF5E4]"
+                        : "border-[#850E35]/8 bg-[#FFFBF1] hover:border-[#850E35]/20"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`flex h-6 w-6 items-center justify-center rounded-md border ${
+                          selected
+                            ? "border-[#850E35] bg-[#850E35] text-white"
+                            : "border-[#850E35]/15 bg-white text-transparent"
+                        }`}
+                      >
+                        <CircleCheck size={14} />
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-bold text-[#850E35]">
+                          {skill}
+                        </p>
+
+                        <p className="mt-0.5 text-[9px] text-[#850E35]/45">
+                          Current {data.current}% → Projected {data.projected}%
+                        </p>
+                      </div>
+                    </div>
+
+                    <span className="text-[9px] font-bold text-[#E36A6A]">
+                      +{data.impact}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={runSimulation}
+            disabled={isSimulating || selectedSkills.length === 0}
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#850E35] px-4 py-3.5 text-xs font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#6e092c] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isSimulating ? (
+              <>
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                Running Simulation...
+              </>
+            ) : (
+              <>
+                <Sparkles size={14} />
+                Run Simulation
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Results */}
+        <div className="p-5 sm:p-6">
+          {!simulationRun ? (
+            <div className="flex min-h-[350px] flex-col items-center justify-center text-center">
+              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#FFF5E4] text-[#850E35]">
+                <Target size={26} />
+              </div>
+
+              <h3 className="text-base font-bold text-[#850E35]">
+                Build your career scenario
+              </h3>
+
+              <p className="mt-2 max-w-sm text-xs leading-5 text-[#850E35]/50">
+                Choose a target role, select the skills you want to improve,
+                and run the simulation to see a projected readiness path.
+              </p>
+
+              <div className="mt-6 flex flex-wrap justify-center gap-2">
+                {selectedSkills.map((skill) => (
+                  <span
+                    key={skill}
+                    className="rounded-full border border-[#850E35]/10 bg-[#FFF5E4] px-3 py-1.5 text-[9px] font-bold text-[#850E35]"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div>
+              {/* Simulation Result Header */}
+              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#E36A6A]">
+                    Simulation Result
+                  </p>
+
+                  <h3 className="mt-1 text-lg font-bold text-[#850E35]">
+                    {targetRole}
+                  </h3>
+                </div>
+
+                <div className="rounded-xl border border-[#E36A6A]/20 bg-[#FFF5E4] px-4 py-2.5 text-right">
+                  <p className="text-[9px] font-bold uppercase tracking-wider text-[#850E35]/45">
+                    Projected Growth
+                  </p>
+
+                  <p className="mt-0.5 text-lg font-bold text-[#E36A6A]">
+                    +{improvement} points
+                  </p>
+                </div>
+              </div>
+
+              {/* Score Comparison */}
+              <div className="rounded-2xl border border-[#850E35]/8 bg-[#FFFBF1] p-5">
+                <div className="mb-5 flex items-end justify-between">
+                  <div>
+                    <p className="text-[9px] font-bold uppercase tracking-wider text-[#850E35]/45">
+                      Career Readiness
+                    </p>
+
+                    <div className="mt-1 flex items-end gap-2">
+                      <span className="text-4xl font-bold tracking-tight text-[#850E35]">
+                        {simulatedScore}
+                      </span>
+
+                      <span className="pb-1 text-xs font-bold text-[#E36A6A]">
+                        / 100
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="text-right">
+                    <p className="text-[9px] text-[#850E35]/45">
+                      Before
+                    </p>
+
+                    <p className="text-sm font-bold text-[#850E35]/45">
+                      {role.baseScore}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="relative h-3 overflow-hidden rounded-full bg-[#FFF5E4]">
+                  <div
+                    className="h-full rounded-full bg-[#850E35] transition-all duration-1000"
+                    style={{ width: `${simulatedScore}%` }}
+                  />
+                </div>
+
+                <div className="mt-2 flex justify-between text-[8px] font-semibold text-[#850E35]/35">
+                  <span>Current readiness</span>
+                  <span>Projected readiness</span>
+                </div>
+              </div>
+
+              {/* Skill Impact */}
+              <div className="mt-5">
+                <div className="mb-3 flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-[#850E35]">
+                    Skill Impact
+                  </h4>
+
+                  <span className="text-[9px] text-[#850E35]/40">
+                    Based on selected skills
+                  </span>
+                </div>
+
+                <div className="space-y-3">
+                  {selectedSkills.map((skill) => {
+                    const data = role.skills[skill];
+
+                    if (!data) {
+                      return null;
+                    }
+
+                    return (
+                      <div
+                        key={skill}
+                        className="rounded-xl border border-[#850E35]/8 bg-[#FFFBF1] p-3.5"
+                      >
+                        <div className="mb-2 flex items-center justify-between">
+                          <span className="text-[10px] font-bold text-[#850E35]">
+                            {skill}
+                          </span>
+
+                          <span className="text-[9px] font-bold text-[#E36A6A]">
+                            {data.current}% → {data.projected}%
+                          </span>
+                        </div>
+
+                        <div className="relative h-2 overflow-hidden rounded-full bg-[#FFF5E4]">
+                          <div
+                            className="absolute left-0 top-0 h-full rounded-full bg-[#850E35]/25"
+                            style={{ width: `${data.current}%` }}
+                          />
+
+                          <div
+                            className="absolute left-0 top-0 h-full rounded-full bg-[#E36A6A] transition-all duration-1000"
+                            style={{
+                              width: `${data.projected}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Projected Roadmap */}
+              <div className="mt-5 rounded-2xl border border-[#850E35]/8 bg-[#850E35] p-5 text-white">
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/45">
+                      Projected Path
+                    </p>
+
+                    <h4 className="mt-1 text-sm font-bold">
+                      Your next career steps
+                    </h4>
+                  </div>
+
+                  <TrendingUp size={17} className="text-[#E36A6A]" />
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {role.roadmap.map((step, index) => (
+                    <React.Fragment key={step}>
+                      <div className="rounded-lg border border-white/10 bg-white/10 px-3 py-2 text-[9px] font-bold text-white/85">
+                        {step}
+                      </div>
+
+                      {index < role.roadmap.length - 1 && (
+                        <ChevronRight
+                          size={12}
+                          className="text-white/30"
+                        />
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setAddedToRoadmap(true)}
+                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-[10px] font-bold text-[#850E35] transition hover:bg-[#FFF5E4]"
+                >
+                  {addedToRoadmap ? (
+                    <>
+                      <CircleCheck size={14} />
+                      Added to My Roadmap
+                    </>
+                  ) : (
+                    <>
+                      <ArrowUpRight size={14} />
+                      Add Simulation to My Roadmap
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
 export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#FFFBF1] text-[#850E35] pt-24">
@@ -144,7 +628,7 @@ export default function Dashboard() {
           {/* =========================================================
               WELCOME
           ========================================================== */}
-          <section id="dashboard-home" className="mb-8 scroll-mt-24">
+          <section id="dashboard-home" data-reveal className="mb-8 scroll-mt-24">
             <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
               <div>
                 <div className="mb-3 flex items-center gap-2">
@@ -220,7 +704,9 @@ export default function Dashboard() {
             {/* Skill Profile */}
             <div
               id="skill-profile"
-              className="scroll-mt-24 rounded-2xl border border-[#850E35]/10 bg-white p-5 shadow-sm sm:p-6"
+              data-reveal
+              data-reveal-variant="left"
+              className="scroll-mt-24 rounded-2xl border border-[#850E35]/10 bg-white p-5 shadow-sm sm:p-6 card-interactive"
             >
               <div className="mb-6 flex items-start justify-between">
                 <div>
@@ -272,7 +758,11 @@ export default function Dashboard() {
             </div>
 
             {/* Career Readiness */}
-            <div className="relative overflow-hidden rounded-2xl border border-[#850E35]/10 bg-[#850E35] p-6 text-white shadow-sm">
+            <div
+              data-reveal
+              data-reveal-variant="right"
+              className="relative overflow-hidden rounded-2xl border border-[#850E35]/10 bg-[#850E35] p-6 text-white shadow-sm card-interactive"
+            >
               <div className="absolute -right-20 -top-20 h-52 w-52 rounded-full border border-white/10" />
               <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full border border-white/10" />
 
@@ -370,12 +860,16 @@ export default function Dashboard() {
               </div>
             </div>
           </section>
-
+          {/* =========================================================
+              CAREER SIMULATION LAB
+          ========================================================== */}
+          <CareerSimulationLab />
           {/* =========================================================
               SKILL GAPS
           ========================================================== */}
           <section
             id="skill-gaps"
+            data-reveal
             className="mb-7 scroll-mt-24 rounded-2xl border border-[#850E35]/10 bg-white p-5 shadow-sm sm:p-6"
           >
             <div className="mb-6 flex items-start justify-between">
@@ -462,7 +956,9 @@ export default function Dashboard() {
             {/* Growth Chart */}
             <div
               id="growth"
-              className="scroll-mt-24 rounded-2xl border border-[#850E35]/10 bg-white p-5 shadow-sm sm:p-6"
+              data-reveal
+              data-reveal-variant="left"
+              className="scroll-mt-24 rounded-2xl border border-[#850E35]/10 bg-white p-5 shadow-sm sm:p-6 card-interactive"
             >
               <div className="mb-5 flex items-start justify-between">
                 <div>
@@ -579,7 +1075,9 @@ export default function Dashboard() {
             {/* Recommended Learning */}
             <div
               id="learning"
-              className="scroll-mt-24 rounded-2xl border border-[#850E35]/10 bg-white p-5 shadow-sm sm:p-6"
+              data-reveal
+              data-reveal-variant="right"
+              className="scroll-mt-24 rounded-2xl border border-[#850E35]/10 bg-white p-5 shadow-sm sm:p-6 card-interactive"
             >
               <div className="mb-5 flex items-start justify-between">
                 <div>
