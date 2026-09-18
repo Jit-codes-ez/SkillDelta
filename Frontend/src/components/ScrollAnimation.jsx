@@ -1,17 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 /**
  * usePrefersReducedMotion Hook
- * Detects if the user prefers reduced motion for accessibility.
  */
 export function usePrefersReducedMotion() {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = React.useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return;
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
-
     const handler = (e) => setPrefersReducedMotion(e.matches);
     mediaQuery.addEventListener('change', handler);
     return () => mediaQuery.removeEventListener('change', handler);
@@ -21,108 +19,187 @@ export function usePrefersReducedMotion() {
 }
 
 /**
- * useScrollReveal
- * Dependency-free scroll animation hook built on IntersectionObserver.
- * Trigger once per element when ~15% of it is visible; never replays on scroll-back-up.
+ * Reveal Component — App-wide automated Scroll Reveal Orchestrator v2
+ *
+ * New in this version:
+ * - Per-element variants ("up" / "left" / "right" / "scale") auto-assigned
+ *   by position — cards near the left of a row slide in from the left,
+ *   right-edge cards from the right, center cards scale in, full-width
+ *   sections rise up. Override any element with data-reveal-variant="...".
+ * - Subtle blur + scale layered on top of the translate for a softer,
+ *   more polished settle (transform/filter driven entirely by CSS custom
+ *   properties, so nothing here fights Tailwind's own transform utilities).
+ * - Wave-style stagger: delay is computed from each card's actual row/column
+ *   position (not just DOM order), so grids cascade diagonally instead of
+ *   in flat left-to-right order.
+ * - Pointer-reactive 3D tilt on .card-interactive cards (desktop/mouse only),
+ *   composed additively with the reveal transform via the same CSS variables.
+ * - One-shot "sheen" light-sweep across each card every time it becomes
+ *   visible (works with the bidirectional reveal, so it replays on re-entry).
+ * - Still bidirectional, still MutationObserver-driven for route changes,
+ *   still respects prefers-reduced-motion.
  */
-export function useScrollReveal({
-  threshold = 0.15,
-  rootMargin = '0px 0px -40px 0px',
-  once = true,
-} = {}) {
-  const ref = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
+export default function Reveal({
+  children,
+  threshold = [0, 0.1],
+  rootMargin = '0px',
+  className = '',
+  as: Component = 'div',
+  ...props
+}) {
+  const containerRef = useRef(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    // Trigger immediately if already visible in viewport on mount
-    const rect = node.getBoundingClientRect();
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
-      setIsVisible(true);
-      if (once) return;
+    if (prefersReducedMotion) {
+      const allTargets = container.querySelectorAll('section, .card-interactive, [data-reveal]');
+      allTargets.forEach((el) => {
+        el.classList.remove('reveal-init');
+        el.classList.add('reveal-visible');
+      });
+      return;
     }
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          if (once) observer.unobserve(node);
-        } else if (!once) {
-          setIsVisible(false);
+    const observedSet = new WeakSet();
+
+    const resolveVariant = (el, idx) => {
+      if (el.dataset.revealVariant) return;
+      if (el.classList.contains('card-interactive')) {
+        const rect = el.getBoundingClientRect();
+        const parentRect = el.parentElement?.getBoundingClientRect();
+        if (parentRect && parentRect.width > 0) {
+          const relX = (rect.left + rect.width / 2 - parentRect.left) / parentRect.width;
+          el.dataset.revealVariant = relX < 0.34 ? 'left' : relX > 0.66 ? 'right' : 'scale';
+        } else {
+          el.dataset.revealVariant = idx % 2 === 0 ? 'scale' : 'up';
         }
+      } else {
+        el.dataset.revealVariant = 'up';
+      }
+    };
+
+    const computeStagger = () => {
+      const groups = new Map();
+      const cards = container.querySelectorAll('.card-interactive');
+      cards.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        const rowKey = Math.round((rect.top + window.scrollY) / 24);
+        if (!groups.has(rowKey)) groups.set(rowKey, []);
+        groups.get(rowKey).push({ el, left: rect.left });
+      });
+      const rowKeys = Array.from(groups.keys()).sort((a, b) => a - b);
+      rowKeys.forEach((key, rowIdx) => {
+        const items = groups.get(key).sort((a, b) => a.left - b.left);
+        items.forEach(({ el }, colIdx) => {
+          el.style.setProperty('--reveal-delay', `${rowIdx * 70 + colIdx * 90}ms`);
+        });
+      });
+    };
+
+    const initAndObserveElement = (el, observer, idx) => {
+      if (!el || observedSet.has(el)) return;
+      observedSet.add(el);
+
+      resolveVariant(el, idx);
+
+      const rect = el.getBoundingClientRect();
+      const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
+
+      if (inViewport) {
+        el.classList.add('reveal-visible');
+      } else {
+        el.classList.add('reveal-init');
+      }
+
+      observer.observe(el);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const el = entry.target;
+          if (entry.isIntersecting) {
+            el.classList.add('reveal-visible');
+            el.classList.remove('reveal-init');
+          } else {
+            el.classList.remove('reveal-visible');
+            el.classList.add('reveal-init');
+          }
+        });
       },
       { threshold, rootMargin }
     );
 
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [threshold, rootMargin, once]);
+    const queryAndObserveAll = () => {
+      const sections = container.querySelectorAll('section');
+      sections.forEach((sec) => {
+        const cards = sec.querySelectorAll('.card-interactive');
+        if (cards.length > 0) {
+          const header = sec.querySelector('.max-w-3xl, [data-section-header]');
+          if (header && !header.classList.contains('card-interactive')) {
+            initAndObserveElement(header, observer, 0);
+          }
+          cards.forEach((card, i) => initAndObserveElement(card, observer, i));
+        } else {
+          initAndObserveElement(sec, observer, 0);
+        }
+      });
 
-  return [ref, isVisible];
-}
+      const standalone = container.querySelectorAll('.card-interactive, [data-reveal]');
+      standalone.forEach((el, i) => initAndObserveElement(el, observer, i));
 
-/**
- * Reveal
- * Wraps cards and sections to animate into view on scroll:
- * - Opacity: 0 -> 1
- * - TranslateY: 10px -> 0
- * - Duration: 700ms
- * - Easing: cubic-bezier(0.16, 1, 0.3, 1)
- * - Supports stagger via `delay` (e.g. idx * 100ms)
- * - Disables transform & opacity transitions when prefers-reduced-motion is active.
- */
-export default function Reveal({
-  children,
-  variant = 'fade-up',
-  delay = 0,
-  duration = 700,
-  className = '',
-  threshold = 0.15,
-  rootMargin = '0px 0px -40px 0px',
-  once = true,
-  as: Component = 'div',
-  ...props
-}) {
-  const [ref, isVisible] = useScrollReveal({ threshold, rootMargin, once });
-  const prefersReducedMotion = usePrefersReducedMotion();
+      requestAnimationFrame(computeStagger);
+    };
 
-  // If user prefers reduced motion, disable transform/opacity transition entirely
-  if (prefersReducedMotion) {
-    return (
-      <Component ref={ref} className={className} {...props}>
-        {children}
-      </Component>
-    );
-  }
+    queryAndObserveAll();
 
-  const base = 'will-change-transform transition-all';
-  const easing = 'cubic-bezier(0.16, 1, 0.3, 1)';
+    const mutationObserver = new MutationObserver(() => {
+      queryAndObserveAll();
+    });
+    mutationObserver.observe(container, { childList: true, subtree: true });
 
-  const variants = {
-    'fade-up': isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[10px]',
-    'fade-down': isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-[10px]',
-    'fade-in': isVisible ? 'opacity-100' : 'opacity-0',
-    'zoom-in': isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95',
-    'slide-left': isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12',
-    'slide-right': isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12',
-    'blur-in': isVisible ? 'opacity-100 blur-none' : 'opacity-0 blur-sm',
-  };
+    // Pointer-reactive 3D tilt — delegated from the container, desktop/mouse only.
+    const supportsFinePointer =
+      typeof window !== 'undefined' && window.matchMedia?.('(pointer: fine)').matches;
+
+    let handleMove, handleLeave;
+    if (supportsFinePointer) {
+      handleMove = (e) => {
+        const card = e.target.closest('.card-interactive');
+        if (!card || !container.contains(card)) return;
+        const rect = card.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width;
+        const py = (e.clientY - rect.top) / rect.height;
+        card.style.setProperty('--tilt-x', `${(py - 0.5) * -8}deg`);
+        card.style.setProperty('--tilt-y', `${(px - 0.5) * 8}deg`);
+        card.classList.add('is-tilting');
+      };
+      handleLeave = (e) => {
+        const card = e.target.closest?.('.card-interactive');
+        if (!card) return;
+        card.classList.remove('is-tilting');
+        card.style.removeProperty('--tilt-x');
+        card.style.removeProperty('--tilt-y');
+      };
+      container.addEventListener('pointermove', handleMove);
+      container.addEventListener('pointerleave', handleLeave, true);
+    }
+
+    return () => {
+      observer.disconnect();
+      mutationObserver.disconnect();
+      if (supportsFinePointer) {
+        container.removeEventListener('pointermove', handleMove);
+        container.removeEventListener('pointerleave', handleLeave, true);
+      }
+    };
+  }, [threshold, rootMargin, prefersReducedMotion]);
 
   return (
-    <Component
-      ref={ref}
-      style={{
-        transitionProperty: 'opacity, transform, filter',
-        transitionDuration: `${duration}ms`,
-        transitionTimingFunction: easing,
-        transitionDelay: `${delay}ms`,
-        ...(props.style || {}),
-      }}
-      className={`${base} ${variants[variant] || variants['fade-up']} ${className}`}
-      {...props}
-    >
+    <Component ref={containerRef} className={className} {...props}>
       {children}
     </Component>
   );

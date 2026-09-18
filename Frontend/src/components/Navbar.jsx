@@ -4,11 +4,11 @@ import { Button2 } from '@/components/Button2';
 import { cn } from '@/lib/utils';
 
 const NAV_LINKS = [
-  { id: 'home', href: '#home', label: 'Home' },
-  { id: 'capabilities', href: '#capabilities', label: 'Capabilities' },
-  { id: 'workflow', href: '#workflow', label: 'How It Works' },
-  { id: 'about', href: '#about', label: 'About' },
-  { id: 'research', href: '#research', label: 'Architecture' },
+  { id: 'home', href: '/#home', label: 'Home' },
+  { id: 'capabilities', href: '/#capabilities', label: 'Capabilities' },
+  { id: 'workflow', href: '/#workflow', label: 'How It Works' },
+  { id: 'about', href: '/#about', label: 'About' },
+  { id: 'research', href: '/#research', label: 'Architecture' },
 ];
 
 export default function Navbar() {
@@ -108,7 +108,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Left: SkillDelta Logo */}
-        <a href="#" className="flex items-center gap-2 group select-none">
+        <a href="/" className="flex items-center gap-2 group select-none">
           <div className="w-8 h-8 rounded-lg bg-[#850E35] flex items-center justify-center text-[#FFFBF1] shadow-xs font-bold text-sm tracking-tighter">
             <span>S</span>
             <span className="text-[#FFF5E4] font-serif text-base italic ml-[-1px]">Δ</span>
@@ -152,11 +152,11 @@ export default function Navbar() {
         {/* Right: CTA Button with Button2 Ripple */}
         <div className="hidden sm:flex items-center gap-3">
           <Button2
-            href="#dashboard"
+            href="/signin"
             variant="default"
             className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-[#FFFBF1] bg-[#850E35] hover:bg-[#6F0A2B] shadow-xs shadow-[#850E35]/25 hover:shadow-md transition-all active:scale-95 cursor-pointer"
           >
-            <span>Analyze Curriculum</span>
+            <span>Sign In</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
           </Button2>
         </div>
@@ -201,11 +201,11 @@ export default function Navbar() {
           })}
           <div className="pt-2 border-t border-[#850E35]/10">
             <Button2
-              href="#dashboard"
+              href="/signin"
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-semibold text-[#FFFBF1] bg-[#850E35] hover:bg-[#6F0A2B] shadow-xs cursor-pointer"
             >
-              <span>Analyze Curriculum</span>
+              <span>Sign In</span>
               <ArrowRight className="w-4 h-4" />
             </Button2>
           </div>

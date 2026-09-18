@@ -2,7 +2,6 @@ import React from 'react';
 import { Building2, BookOpen, Workflow, FlaskConical, ArrowRight } from 'lucide-react';
 import Card1 from '../components/Card1';
 import TextAnimate from '@/components/TextAnimation';
-import Reveal from '../components/ScrollAnimation';
 const AUDIENCES = [
   {
     title: 'Universities & Institutional Leadership',
@@ -66,35 +65,34 @@ export default function WhoIsItFor() {
           {AUDIENCES.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <Reveal key={idx} delay={idx * 100} duration={700}>
-                <Card1
-                  className="bg-white rounded-2xl border border-[#850E35]/15 p-6 flex flex-col justify-between card-interactive group h-full"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-11 h-11 rounded-xl bg-[#FFF5E4] border border-[#850E35]/15 flex items-center justify-center text-[#850E35] group-hover:bg-[#850E35] group-hover:text-[#FFFBF1] transition-colors shadow-2xs">
-                        <Icon className="w-5 h-5 card-icon" />
-                      </div>
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#FFF5E4] border border-[#850E35]/20 text-[#850E35]">
-                        {item.badge}
-                      </span>
+              <Card1
+                key={idx}
+                className="bg-white rounded-2xl border border-[#850E35]/15 p-6 flex flex-col justify-between card-interactive group h-full"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-11 h-11 rounded-xl bg-[#FFF5E4] border border-[#850E35]/15 flex items-center justify-center text-[#850E35] group-hover:bg-[#850E35] group-hover:text-[#FFFBF1] transition-colors shadow-2xs">
+                      <Icon className="w-5 h-5 card-icon" />
                     </div>
-
-                    <h3 className="text-base font-bold text-[#850E35] mb-2 leading-snug group-hover:text-[#E36A6A] transition-colors">
-                      {item.short}
-                    </h3>
-
-                    <p className="text-xs text-[#850E35]/80 leading-relaxed">
-                      {item.description}
-                    </p>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#FFF5E4] border border-[#850E35]/20 text-[#850E35]">
+                      {item.badge}
+                    </span>
                   </div>
 
-                  <div className="mt-6 pt-3 border-t border-[#850E35]/10 flex items-center justify-between text-xs text-[#850E35]/60 font-medium">
-                    <span>Stakeholder 0{idx + 1}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#850E35]/30 group-hover:text-[#850E35] group-hover:translate-x-0.5 transition-all" />
-                  </div>
-                </Card1>
-              </Reveal>
+                  <h3 className="text-base font-bold text-[#850E35] mb-2 leading-snug group-hover:text-[#E36A6A] transition-colors">
+                    {item.short}
+                  </h3>
+
+                  <p className="text-xs text-[#850E35]/80 leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+
+                <div className="mt-6 pt-3 border-t border-[#850E35]/10 flex items-center justify-between text-xs text-[#850E35]/60 font-medium">
+                  <span>Stakeholder 0{idx + 1}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#850E35]/30 group-hover:text-[#850E35] group-hover:translate-x-0.5 transition-all" />
+                </div>
+              </Card1>
             );
           })}
         </div>

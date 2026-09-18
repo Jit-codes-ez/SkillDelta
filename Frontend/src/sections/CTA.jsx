@@ -63,7 +63,7 @@ export default function CTA() {
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Button1
-            href="#dashboard"
+            href="/signup"
             className="inline-flex items-center gap-2 px-7 py-4 rounded-xl bg-[#FFF5E4] hover:bg-[#FFFBF1] active:scale-95 text-[#850E35] font-bold text-sm shadow-lg shadow-black/25 hover:shadow-xl transition-all group"
           >
               Analyze a Curriculum

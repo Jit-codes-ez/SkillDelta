@@ -1,5 +1,4 @@
 import React from 'react';
-import ScrollAnimation from '../components/ScrollAnimation';
 import Hero from '../sections/Hero';
 import ProblemSection from '../sections/ProblemSection';
 import Workflow from '../sections/Workflow';
@@ -14,29 +13,19 @@ export default function Home() {
       <Hero />
 
       {/* 2. Problem Section: Education evolves. Industry evolves faster. */}
-      <ScrollAnimation threshold={0.1}>
-        <ProblemSection />
-      </ScrollAnimation>
+      <ProblemSection />
 
       {/* 3. Workflow Section: 8-Stage End-to-End Timeline */}
-      <ScrollAnimation threshold={0.1}>
-        <Workflow />
-      </ScrollAnimation>
+      <Workflow />
 
       {/* 4. Target Audiences: Who is it for? */}
-      <ScrollAnimation threshold={0.1}>
-        <WhoIsItFor />
-      </ScrollAnimation>
+      <WhoIsItFor />
 
       {/* 5. AI Pipeline Section: Behind the Intelligence */}
-      <ScrollAnimation threshold={0.1}>
-        <AIPipeline />
-      </ScrollAnimation>
+      <AIPipeline />
 
       {/* 6. Closing Institutional Call to Action */}
-      <ScrollAnimation threshold={0.1}>
-        <CTA />
-      </ScrollAnimation>
+      <CTA />
     </>
   );
 }

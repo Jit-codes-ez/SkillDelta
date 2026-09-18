@@ -14,7 +14,6 @@ import {
 import Card1 from '../components/Card1';
 import Card2 from '../components/Card2';
 import { TextAnimate } from '@/components/TextAnimation';
-import Reveal from '../components/ScrollAnimation';
 import { Button2 } from '@/components/Button2';
 
 const STEPS = [
@@ -107,56 +106,55 @@ export default function Workflow() {
             const Icon = step.icon;
             const isSelected = selectedStep === idx;
             return (
-              <Reveal key={idx} delay={(idx % 4) * 100} duration={700}>
-                <Card2
-                  onClick={() => setSelectedStep(idx)}
-                  className={`bg-white rounded-2xl border border-[#850E35]/15 p-5 flex flex-col justify-between card-interactive group relative overflow-visible cursor-pointer h-full ${
-                    isSelected ? 'border-l-[#850E35] shadow-md' : ''
-                  }`}
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <span
-                        className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${
-                          isSelected
-                            ? 'bg-[#850E35] text-[#FFFBF1]'
-                            : 'bg-[#FFFBF1] text-[#850E35]/70 group-hover:bg-[#850E35] group-hover:text-[#FFFBF1]'
-                        }`}
-                      >
-                        {step.num}
-                      </span>
-                      <Icon
-                        className={`w-5 h-5 card-icon ${
-                          isSelected ? 'text-[#850E35]' : 'text-[#850E35]/50 group-hover:text-[#850E35]'
-                        }`}
-                      />
-                    </div>
-
-                    <h3 className="text-sm font-bold text-[#850E35] mb-2 leading-snug">
-                      {step.title}
-                    </h3>
-
-                    <p className="text-xs text-[#850E35]/80 leading-relaxed">
-                      {step.description}
-                    </p>
-                  </div>
-
-                  <div className="mt-4 pt-3 border-t border-[#850E35]/10 flex items-center justify-between text-[11px] text-[#850E35]/50 font-medium">
-                    <span>Phase {idx + 1}</span>
-                    <ArrowRight
-                      className={`w-3.5 h-3.5 ${
-                        isSelected ? 'text-[#850E35] translate-x-0.5' : 'text-[#850E35]/30'
+              <Card2
+                key={idx}
+                onClick={() => setSelectedStep(idx)}
+                className={`bg-white rounded-2xl border border-[#850E35]/15 p-5 flex flex-col justify-between card-interactive group relative overflow-visible cursor-pointer h-full ${
+                  isSelected ? 'border-l-[#850E35] shadow-md' : ''
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span
+                      className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${
+                        isSelected
+                          ? 'bg-[#850E35] text-[#FFFBF1]'
+                          : 'bg-[#FFFBF1] text-[#850E35]/70 group-hover:bg-[#850E35] group-hover:text-[#FFFBF1]'
+                      }`}
+                    >
+                      {step.num}
+                    </span>
+                    <Icon
+                      className={`w-5 h-5 card-icon ${
+                        isSelected ? 'text-[#850E35]' : 'text-[#850E35]/50 group-hover:text-[#850E35]'
                       }`}
                     />
                   </div>
-                </Card2>
-              </Reveal>
+
+                  <h3 className="text-sm font-bold text-[#850E35] mb-2 leading-snug">
+                    {step.title}
+                  </h3>
+
+                  <p className="text-xs text-[#850E35]/80 leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-[#850E35]/10 flex items-center justify-between text-[11px] text-[#850E35]/50 font-medium">
+                  <span>Phase {idx + 1}</span>
+                  <ArrowRight
+                    className={`w-3.5 h-3.5 ${
+                      isSelected ? 'text-[#850E35] translate-x-0.5' : 'text-[#850E35]/30'
+                    }`}
+                  />
+                </div>
+              </Card2>
             );
           })}
         </div>
 
         {/* Active Step Drilldown Telemetry Box */}
-        <Card1 className="max-w-3xl mx-auto bg-white rounded-2xl border border-[#850E35]/25 p-6 sm:p-8 shadow-xs">
+        <Card1 className="max-w-3xl mx-auto bg-white rounded-2xl border border-[#850E35]/25 p-6 sm:p-8 shadow-xs card-interactive">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 w-full">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-xl bg-[#850E35] text-[#FFFBF1] flex items-center justify-center shrink-0 shadow-xs shadow-[#850E35]/20">

@@ -52,6 +52,8 @@ export default function SkillNetwork() {
   const containerRef  = useRef(null);
   const leftRefs      = useRef([]);
   const rightRefs     = useRef([]);
+  const leftPanelRef  = useRef(null);
+  const rightPanelRef = useRef(null);
   const [hovered, setHovered] = useState(null);
   const hoveredRef    = useRef(null);
   useEffect(() => { hoveredRef.current = hovered; }, [hovered]);
@@ -63,7 +65,9 @@ export default function SkillNetwork() {
     if (!ctx) return;
 
     let animId, width = 0, height = 0;
-    const NUM_P = 42;
+    // Fewer particles on narrow (mobile) screens — 42 riding lines packed
+    // into a short horizontal span reads as visual noise rather than motion.
+    const NUM_P = typeof window !== 'undefined' && window.innerWidth < 640 ? 22 : 42;
     const particles = Array.from({ length: NUM_P }, () => ({
       ci: Math.floor(Math.random() * CONNECTIONS.length),
       t:  Math.random(),
@@ -77,7 +81,7 @@ export default function SkillNetwork() {
       const rect = containerRef.current.getBoundingClientRect();
       const dpr  = window.devicePixelRatio || 1;
       width  = rect.width;
-      height = Math.max(500, rect.height || 500);
+      height = Math.max(width < 640 ? 420 : 500, rect.height || 500);
       canvas.width  = width  * dpr;
       canvas.height = height * dpr;
       canvas.style.width  = `${width}px`;
@@ -123,9 +127,28 @@ export default function SkillNetwork() {
       const cy = height * 0.5;
 
       // ── Box dimensions ─────────────────────────────────────────────────
-      const BW = 148, BH = 88;        // box width / height
+      // Sized against the real gap between the left/right card panels so
+      // it never collides with them. On desktop that gap is always large
+      // (>220px), so isCompact stays false and BW/BH/fonts are the exact
+      // original fixed values — nothing changes there. Only genuinely
+      // narrow (mobile) gaps trigger the smaller box + smaller type.
+      const leftPanelRect  = leftPanelRef.current?.getBoundingClientRect();
+      const rightPanelRect = rightPanelRef.current?.getBoundingClientRect();
+      const panelGapEdgeL  = leftPanelRect  ? leftPanelRect.right - cRect.left  : cx - 148;
+      const panelGapEdgeR  = rightPanelRect ? rightPanelRect.left - cRect.left  : cx + 148;
+      const availableGap   = Math.max(0, panelGapEdgeR - panelGapEdgeL);
+      const isCompact      = availableGap < 220;
+
+      const BW = isCompact ? Math.max(78, Math.min(140, availableGap - 18)) : 148;
+      const BH = isCompact ? 58 : 88;
       const BX = cx - BW / 2;
       const BY = cy - BH / 2;
+
+      const titleFont    = isCompact ? '600 8px Inter,system-ui,sans-serif'   : '600 10px Inter,system-ui,sans-serif';
+      const subtitleFont = isCompact ? 'bold 10.5px Inter,system-ui,sans-serif' : 'bold 13.5px Inter,system-ui,sans-serif';
+      const captionFont  = isCompact ? '500 7.5px monospace'                 : '500 9.5px monospace';
+      const titleGap     = isCompact ? 15 : 22;
+      const captionGap    = isCompact ? 14 : 20;
 
       // ── Key anchor points ──────────────────────────────────────────────
       // mergeL: where all LEFT branches converge (left edge of box)
@@ -143,12 +166,20 @@ export default function SkillNetwork() {
       // CP2: arrive from left at mergeL.y
       // The horizontal pull (spread) equals ~55% of the total x-distance.
       // ══════════════════════════════════════════════════════════════════
+      // On a narrow container the horizontal room between cards and the box
+      // is small relative to how tall the stack of cards is — pulling the
+      // control points out further (as a fraction of that smaller distance)
+      // keeps lines from all reading as one bunched-up near-vertical band.
+      const leftPullRatio  = isCompact ? 0.72 : 0.55;
+      const bigPullRatio   = isCompact ? 0.74 : 0.60;
+      const cardPullRatio  = isCompact ? 0.16 : 0.25;
+
       leftPaths = [];
       CONNECTIONS.forEach((conn) => {
         const lp  = LP[conn.from];
         const hi  = h === ACADEMIC_NODES[conn.from].id || h === INDUSTRY_NODES[conn.to].id;
         const dx  = mergeL.x - lp.x;
-        const pull = dx * 0.55;
+        const pull = dx * leftPullRatio;
 
         ctx.strokeStyle = hi ? 'rgba(133,14,53,0.95)' : 'rgba(133,14,53,0.25)';
         ctx.lineWidth   = hi ? 2.5 : 1.2;
@@ -170,8 +201,8 @@ export default function SkillNetwork() {
         const hi  = h === ACADEMIC_NODES[conn.from].id || h === INDUSTRY_NODES[conn.to].id;
 
         const totalDx   = rp.x - fanR.x;
-        const bigPull   = totalDx * 0.60;   // CP1: stay horizontal this long
-        const cardPull  = totalDx * 0.25;   // CP2: arrive from this far left of card
+        const bigPull   = totalDx * bigPullRatio;   // CP1: stay horizontal this long
+        const cardPull  = totalDx * cardPullRatio;  // CP2: arrive from this far left of card
 
         const color = conn.type === 'partial'
           ? `rgba(227,106,106,${hi ? 1 : 0.55})`
@@ -199,8 +230,8 @@ export default function SkillNetwork() {
         const hi  = h === INDUSTRY_NODES[toIdx].id;
 
         const totalDx  = rp.x - fanR.x;
-        const bigPull  = totalDx * 0.60;
-        const cardPull = totalDx * 0.25;
+        const bigPull  = totalDx * bigPullRatio;
+        const cardPull = totalDx * cardPullRatio;
 
         ctx.strokeStyle = hi ? 'rgba(227,106,106,1)' : 'rgba(227,106,106,0.60)';
         ctx.lineWidth   = hi ? 2.5 : 1.4;
@@ -258,14 +289,14 @@ export default function SkillNetwork() {
       // ══════════════════════════════════════════════════════════════════
       // CENTER ENGINE
       // ══════════════════════════════════════════════════════════════════
-      const pulse = 62 + Math.sin(time * 2.2) * 5;
+      const pulse = (isCompact ? Math.min(48, BW * 0.42) : 62) + Math.sin(time * 2.2) * (isCompact ? 3 : 5);
 
       // Outer glow
-      const grd = ctx.createRadialGradient(cx, cy, 8, cx, cy, 82);
+      const grd = ctx.createRadialGradient(cx, cy, 8, cx, cy, isCompact ? 60 : 82);
       grd.addColorStop(0, 'rgba(227,106,106,0.13)');
       grd.addColorStop(1, 'rgba(255,245,228,0)');
       ctx.beginPath();
-      ctx.arc(cx, cy, pulse + 16, 0, Math.PI * 2);
+      ctx.arc(cx, cy, pulse + (isCompact ? 10 : 16), 0, Math.PI * 2);
       ctx.fillStyle = grd;
       ctx.fill();
 
@@ -297,13 +328,13 @@ export default function SkillNetwork() {
       ctx.shadowOffsetY = 5;
       ctx.fillStyle     = '#FFF5E4';
       ctx.beginPath();
-      ctx.roundRect(BX, BY, BW, BH, 14);
+      ctx.roundRect(BX, BY, BW, BH, isCompact ? 10 : 14);
       ctx.fill();
       ctx.restore();
 
       // Box border
       ctx.beginPath();
-      ctx.roundRect(BX, BY, BW, BH, 14);
+      ctx.roundRect(BX, BY, BW, BH, isCompact ? 10 : 14);
       ctx.strokeStyle = '#850E35';
       ctx.lineWidth   = 1.8;
       ctx.stroke();
@@ -311,17 +342,19 @@ export default function SkillNetwork() {
       // Box text
       ctx.textAlign = 'center';
       ctx.fillStyle = '#850E35';
-      ctx.font      = '600 10px Inter,system-ui,sans-serif';
-      ctx.fillText('SkillDelta AI/ML', cx, cy - 22);
-      ctx.font      = 'bold 13.5px Inter,system-ui,sans-serif';
+      ctx.font      = titleFont;
+      ctx.fillText('SkillDelta AI/ML', cx, cy - titleGap);
+      ctx.font      = subtitleFont;
       ctx.fillText('Semantic Matching', cx, cy + 1);
       ctx.fillStyle = 'rgba(133,14,53,0.55)';
-      ctx.font      = '500 9.5px monospace';
-      ctx.fillText('Embedding Δ = 384-dim', cx, cy + 20);
+      ctx.font      = captionFont;
+      if (!isCompact || BW >= 110) {
+        ctx.fillText('Embedding Δ = 384-dim', cx, cy + captionGap);
+      }
 
       // Activity dot
       ctx.beginPath();
-      ctx.arc(BX + BW - 10, BY + 10, 3.5, 0, Math.PI * 2);
+      ctx.arc(BX + BW - (isCompact ? 8 : 10), BY + (isCompact ? 8 : 10), isCompact ? 3 : 3.5, 0, Math.PI * 2);
       ctx.fillStyle = '#E36A6A';
       ctx.fill();
 
@@ -358,13 +391,16 @@ export default function SkillNetwork() {
       </div>
 
       {/* Canvas wrapper */}
-      <div  ref={containerRef} className="relative min-h-[700px] w-full rounded-2xl border border-[#850E35]/20 bg-[#FFF5E4]/40 overflow-hidden">
+      <div  ref={containerRef} className="relative min-h-[440px] sm:min-h-[700px] w-full rounded-2xl border border-[#850E35]/20 bg-[#FFF5E4]/40 overflow-hidden">
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block z-0" />
 
         {/* LEFT — Academic */}
-        <div className="absolute left-2 sm:left-4 top-0 bottom-0 flex flex-col justify-around py-6 z-10 w-40 sm:w-48">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-[#850E35]/55 px-1 mb-1">
-            Academic Curriculum
+        <div
+          ref={leftPanelRef}
+          className="absolute left-2 sm:left-4 top-0 bottom-0 flex flex-col justify-around py-4 sm:py-6 z-10 w-[30%] min-w-[96px] sm:w-48"
+        >
+          <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#850E35]/55 px-1 mb-1 truncate">
+            Academic
           </div>
           {ACADEMIC_NODES.map((node, i) => (
             <div
@@ -374,24 +410,27 @@ export default function SkillNetwork() {
               onMouseLeave={() => setHovered(null)}
               onTouchStart={() => setHovered(node.id)}
               onTouchEnd={()   => setHovered(null)}
-              className={`p-2.5 rounded-xl border transition-all duration-200 cursor-pointer ${
+              className={`p-1.5 sm:p-2.5 rounded-xl border transition-all duration-200 cursor-pointer ${
                 hovered === node.id
                   ? 'bg-white border-[#850E35] shadow-md shadow-[#850E35]/15 scale-105 ring-2 ring-[#850E35]/20'
                   : 'bg-[#FFFBF1]/95 border-[#850E35]/15 hover:border-[#850E35]/40'
               }`}
             >
-              <div className="flex items-center justify-between text-[10px] text-[#850E35]/55 font-medium mb-0.5">
-                <span>{node.category}</span>
-                <span className="text-[#850E35] font-bold">{node.strength}</span>
+              <div className="flex items-center justify-between text-[9px] sm:text-[10px] text-[#850E35]/55 font-medium mb-0.5 gap-1">
+                <span className="truncate">{node.category}</span>
+                <span className="text-[#850E35] font-bold shrink-0 hidden sm:inline">{node.strength}</span>
               </div>
-              <div className="text-xs font-semibold text-[#850E35] truncate">{node.label}</div>
+              <div className="text-[10px] sm:text-xs font-semibold text-[#850E35] truncate">{node.label}</div>
             </div>
           ))}
         </div>
 
         {/* RIGHT — Industry */}
-        <div className="absolute right-2 sm:right-4 top-0 bottom-0 flex flex-col justify-around py-6 z-10 w-44 sm:w-52">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-[#850E35]/55 px-1 mb-1 text-right">
+        <div
+          ref={rightPanelRef}
+          className="absolute right-2 sm:right-4 top-0 bottom-0 flex flex-col justify-around py-6 z-10 w-[34%] min-w-[104px] sm:w-52"
+        >
+          <div className="text-[10px] font-bold uppercase tracking-wider text-[#850E35]/55 px-1 mb-1 text-right truncate">
             Industry Demand
           </div>
           {INDUSTRY_NODES.map((node, i) => (
@@ -402,7 +441,7 @@ export default function SkillNetwork() {
               onMouseLeave={() => setHovered(null)}
               onTouchStart={() => setHovered(node.id)}
               onTouchEnd={()   => setHovered(null)}
-              className={`p-2.5 rounded-xl border transition-all duration-200 cursor-pointer ${
+              className={`p-1.5 sm:p-2.5 rounded-xl border transition-all duration-200 cursor-pointer ${
                 hovered === node.id
                   ? node.isGap
                     ? 'bg-white border-[#E36A6A] shadow-md shadow-[#E36A6A]/20 scale-105 ring-2 ring-[#E36A6A]/30'
@@ -412,9 +451,9 @@ export default function SkillNetwork() {
                   : 'bg-[#FFFBF1]/95 border-[#850E35]/15 hover:border-[#850E35]/40'
               }`}
             >
-              <div className="flex items-center justify-between text-[10px] mb-0.5">
-                <span className="text-[#850E35]/55 font-medium">{node.category}</span>
-                <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded font-bold text-[9px] ${
+              <div className="flex items-center justify-between text-[9px] sm:text-[10px] mb-0.5 gap-1">
+                <span className="text-[#850E35]/55 font-medium truncate">{node.category}</span>
+                <span className={`inline-flex items-center gap-0.5 px-1 sm:px-1.5 py-0.5 rounded font-bold text-[8px] sm:text-[9px] shrink-0 ${
                   node.isGap
                     ? 'bg-[#E36A6A] text-[#FFFBF1]'
                     : node.status === 'Partial Match'
@@ -424,10 +463,10 @@ export default function SkillNetwork() {
                   {node.isGap
                     ? <AlertTriangle className="w-2.5 h-2.5" />
                     : <CheckCircle2  className="w-2.5 h-2.5" />}
-                  {node.status}
+                  <span className="hidden sm:inline">{node.status}</span>
                 </span>
               </div>
-              <div className="text-xs font-semibold text-[#850E35] truncate">{node.label}</div>
+              <div className="text-[10px] sm:text-xs font-semibold text-[#850E35] truncate">{node.label}</div>
             </div>
           ))}
         </div>
