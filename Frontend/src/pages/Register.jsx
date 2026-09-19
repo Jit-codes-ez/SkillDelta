@@ -14,6 +14,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from 'motion/react';
 import { TextAnimation } from "@/components/TextAnimation";
 import { CardGlare } from "@/components/CardGlare";
+import { AnimatedInput } from "@/components/AnimatedInput";
+import { GoogleButton } from "@/components/GoogleButton";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -31,6 +33,15 @@ export default function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+
+  const handleGoogleAuth = () => {
+    setIsGoogleSubmitting(true);
+    setTimeout(() => {
+      setIsGoogleSubmitting(false);
+      navigate("/dashboard");
+    }, 1000);
+  };
 
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
@@ -131,7 +142,7 @@ export default function Register() {
                 duration={0.4}
                 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#850E35]/45"
               >
-                Skill Intelligence Platform
+                Why Join SkillDelta • Member Advantages
               </TextAnimation>
             </div>
 
@@ -144,7 +155,7 @@ export default function Register() {
                 delay={0.15}
                 duration={0.4}
               >
-                Build the skills
+                Unlock the benefits
               </TextAnimation>
 
               <TextAnimation
@@ -155,7 +166,7 @@ export default function Register() {
                 duration={0.4}
                 className="block text-[#E36A6A]"
               >
-                your career needs.
+                of signing up.
               </TextAnimation>
             </div>
 
@@ -168,8 +179,9 @@ export default function Register() {
               duration={0.5}
               className="mt-6 max-w-lg text-sm leading-7 text-[#850E35]/55"
             >
-              Create your SkillDelta account and start building a personalized learning
-              roadmap based on your current skills and career goals.
+              Signing up gives you instant access to intelligent skill benchmarking,
+              adaptive career roadmaps, and verifiable milestone credentials tailored
+              specifically to your dream role.
             </TextAnimation>
 
             {/* FEATURES */}
@@ -188,18 +200,21 @@ export default function Register() {
               {[
                 {
                   icon: <Sparkles size={16} />,
-                  title: 'Personalized skill analysis',
-                  description: 'Understand where you stand and what to learn next.',
+                  title: 'Instant skill gap diagnostic',
+                  description:
+                    'Identify the exact technical competencies and frameworks you need to land your target role.',
                 },
                 {
                   icon: <BriefcaseBusiness size={16} />,
-                  title: 'Career-focused roadmap',
-                  description: 'Connect your learning progress with your target role.',
+                  title: 'Custom role-aligned roadmap',
+                  description:
+                    'Follow a structured, step-by-step learning progression calibrated to industry requirements.',
                 },
                 {
                   icon: <ShieldCheck size={16} />,
-                  title: 'Track your progress',
-                  description: 'Keep your skills, gaps and career journey in one place.',
+                  title: 'Verified competence milestones',
+                  description:
+                    'Validate your skills against actual job market benchmarks and showcase job-ready credentials.',
                 },
               ].map((item, index) => (
                 <motion.div
@@ -256,8 +271,8 @@ export default function Register() {
                 >
 
                   {/* FULL NAME */}
-                  <InputField
-                    label="Full name"
+                  <AnimatedInput
+                    label="Full Name"
                     name="fullName"
                     type="text"
                     placeholder="Enter your full name"
@@ -269,8 +284,8 @@ export default function Register() {
                   />
 
                   {/* EMAIL */}
-                  <InputField
-                    label="Email address"
+                  <AnimatedInput
+                    label="Email Address"
                     name="email"
                     type="email"
                     placeholder="you@example.com"
@@ -283,16 +298,14 @@ export default function Register() {
 
                   {/* CAREER GOAL */}
                   <div>
-
                     <label
                       htmlFor="careerGoal"
                       className="mb-1.5 block text-xs font-semibold"
                     >
-                      Career goal
+                      Career Goal
                     </label>
 
                     <div className="relative">
-
                       <BriefcaseBusiness
                         size={16}
                         className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#850E35]/35"
@@ -309,59 +322,59 @@ export default function Register() {
                             : "border-[#850E35]/10 focus:border-[#850E35]/30"
                         }`}
                       >
-
                         <option value="">
                           Select your target role
                         </option>
-
                         <option value="full-stack-developer">
                           Full Stack Developer
                         </option>
-
                         <option value="frontend-developer">
                           Frontend Developer
                         </option>
-
                         <option value="backend-developer">
                           Backend Developer
                         </option>
-
                         <option value="software-engineer">
                           Software Engineer
                         </option>
-
                         <option value="data-scientist">
                           Data Scientist
                         </option>
-
                         <option value="ai-ml-engineer">
                           AI / ML Engineer
                         </option>
-
                         <option value="devops-engineer">
                           DevOps Engineer
                         </option>
-
                       </select>
-
                     </div>
 
                     {errors.careerGoal && (
                       <ErrorMessage text={errors.careerGoal} />
                     )}
-
                   </div>
 
                   {/* PASSWORD */}
-                  <PasswordField
+                  <AnimatedInput
                     label="Password"
                     name="password"
+                    type={showPassword ? "text" : "password"}
                     value={formData.password}
                     onChange={handleChange}
-                    showPassword={showPassword}
-                    setShowPassword={setShowPassword}
+                    icon={<Lock size={16} />}
                     error={errors.password}
                     placeholder="Create a password"
+                    autoComplete="new-password"
+                    endElement={
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        className="rounded-md p-1 text-[#850E35]/40 hover:bg-[#FFF5E4] hover:text-[#850E35]"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                      >
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    }
                   />
 
                   <p className="-mt-2 text-[10px] text-[#850E35]/40">
@@ -369,15 +382,26 @@ export default function Register() {
                   </p>
 
                   {/* CONFIRM PASSWORD */}
-                  <PasswordField
-                    label="Confirm password"
+                  <AnimatedInput
+                    label="Confirm Password"
                     name="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    showPassword={showConfirmPassword}
-                    setShowPassword={setShowConfirmPassword}
+                    icon={<Lock size={16} />}
                     error={errors.confirmPassword}
                     placeholder="Confirm your password"
+                    autoComplete="new-password"
+                    endElement={
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                        className="rounded-md p-1 text-[#850E35]/40 hover:bg-[#FFF5E4] hover:text-[#850E35]"
+                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                      >
+                        {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    }
                   />
 
                   {/* TERMS */}
@@ -395,13 +419,13 @@ export default function Register() {
 
                       <span className="text-[10px] leading-5 text-[#850E35]/55">
                         I agree to the SkillDelta{" "}
-                        <span className="font-semibold text-[#850E35]">
+                        <Link to = "/terms" className="font-semibold text-[#850E35]">
                           Terms of Service
-                        </span>{" "}
+                        </Link>{" "}
                         and{" "}
-                        <span className="font-semibold text-[#850E35]">
+                        <Link to = "/privacy" className="font-semibold text-[#850E35]">
                           Privacy Policy
-                        </span>
+                        </Link>
                         .
                       </span>
 
@@ -440,6 +464,22 @@ export default function Register() {
                   </button>
 
                 </form>
+
+              {/* DIVIDER */}
+                <div className="relative my-6 flex items-center justify-center">
+                  <div className="w-full border-t border-[#850E35]/10" />
+                  <span className="absolute bg-white px-3 text-[10px] font-bold uppercase tracking-wider text-[#850E35]/40">
+                    Or continue with Google
+                  </span>
+                </div>
+
+              {/* GOOGLE SIGN UP BUTTON */}
+                <GoogleButton
+                  text="Sign up with Google"
+                  isLoading={isGoogleSubmitting}
+                  disabled={isSubmitting}
+                  onClick={handleGoogleAuth}
+                />
 
                 {/* LOGIN */}
                 <div className="mt-6 border-t border-[#850E35]/10 pt-5 text-center">
@@ -509,140 +549,10 @@ function Feature({
 }
 
 
-/* ================================================================
-   INPUT COMPONENT
-================================================================ */
-
-function InputField({
-  label,
-  name,
-  type,
-  placeholder,
-  value,
-  onChange,
-  icon,
-  error,
-  autoComplete,
-}) {
-  return (
-    <div>
-
-      <label
-        htmlFor={name}
-        className="mb-1.5 block text-xs font-semibold"
-      >
-        {label}
-      </label>
-
-      <div className="relative">
-
-        <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#850E35]/35">
-          {icon}
-        </span>
-
-        <input
-          id={name}
-          name={name}
-          type={type}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          autoComplete={autoComplete}
-          className={`w-full rounded-xl border bg-[#FFFBF1] py-3 pl-10 pr-4 text-sm text-[#850E35] outline-none transition placeholder:text-[#850E35]/30 focus:bg-white focus:ring-2 focus:ring-[#E36A6A]/20 ${
-            error
-              ? "border-red-400"
-              : "border-[#850E35]/10 focus:border-[#850E35]/30"
-          }`}
-        />
-
-      </div>
-
-      {error && (
-        <ErrorMessage text={error} />
-      )}
-
-    </div>
-  );
-}
-
-
-/* ================================================================
-   PASSWORD COMPONENT
-================================================================ */
-
-function PasswordField({
-  label,
-  name,
-  value,
-  onChange,
-  showPassword,
-  setShowPassword,
-  error,
-  placeholder,
-}) {
-  return (
-    <div>
-
-      <label
-        htmlFor={name}
-        className="mb-1.5 block text-xs font-semibold"
-      >
-        {label}
-      </label>
-
-      <div className="relative">
-
-        <Lock
-          size={16}
-          className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#850E35]/35"
-        />
-
-        <input
-          id={name}
-          name={name}
-          type={showPassword ? "text" : "password"}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          autoComplete="new-password"
-          className={`w-full rounded-xl border bg-[#FFFBF1] py-3 pl-10 pr-11 text-sm text-[#850E35] outline-none transition placeholder:text-[#850E35]/30 focus:bg-white focus:ring-2 focus:ring-[#E36A6A]/20 ${
-            error
-              ? "border-red-400"
-              : "border-[#850E35]/10 focus:border-[#850E35]/30"
-          }`}
-        />
-
-        <button
-          type="button"
-          onClick={() =>
-            setShowPassword((prev) => !prev)
-          }
-          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-[#850E35]/40 hover:bg-[#FFF5E4] hover:text-[#850E35]"
-        >
-
-          {showPassword ? (
-            <EyeOff size={16} />
-          ) : (
-            <Eye size={16} />
-          )}
-
-        </button>
-
-      </div>
-
-      {error && (
-        <ErrorMessage text={error} />
-      )}
-
-    </div>
-  );
-}
-
 
 /* ================================================================
    ERROR MESSAGE
 ================================================================ */
-
 function ErrorMessage({ text }) {
   return (
     <p className="mt-1.5 text-[10px] font-medium text-red-500">

@@ -4,6 +4,7 @@ import {
   HelpCircle,
   ChevronDown,
   Mail,
+  User,
   MessageSquare,
   Search,
   Sparkles,
@@ -12,11 +13,9 @@ import {
   CheckCircle2,
   FileQuestion,
   Clock,
-  ExternalLink,
-  ShieldAlert
 } from 'lucide-react';
 import { TextAnimate } from '@/components/TextAnimation';
-import { Card } from '@/components/Card1';
+import { AnimatedInput } from '@/components/AnimatedInput';
 import { Button2 } from '@/components/Button2';
 
 const FAQS = [
@@ -245,87 +244,92 @@ export default function FAQSupport() {
             )}
           </div>
 
-          {/* Right Column: Support & Institutional Inquiry Card with Card1 */}
+          {/* Right Column: Simple Institutional Inquiry Card with CardGlare & AnimatedInput */}
           <div className="lg:col-span-5">
-            <Card className="p-6 sm:p-7 shadow-md space-y-5">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#FFF5E4] border border-[#850E35]/20 flex items-center justify-center text-[#850E35]">
-                  <MessageSquare className="w-5 h-5 text-[#850E35]" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-[#850E35]">Institutional Inquiry</h3>
-                  <p className="text-xs text-[#850E35]/65">Research initiative and technical helpdesk</p>
-                </div>
-              </div>
+            <div className="relative rounded-2xl p-[2px] overflow-hidden shadow-lg group">
+              {/* Rotating Glare Beam (CardGlare effect) */}
+              <div
+                style={{
+                  background:
+                    'conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 50deg, #850E35 110deg, #E36A6A 150deg, #FFF5E4 175deg, #E36A6A 200deg, #850E35 240deg, transparent 290deg, transparent 360deg)',
+                }}
+                className="animate-spin-glare pointer-events-none absolute -inset-[150%] opacity-80 will-change-transform"
+                aria-hidden="true"
+              />
 
-              <div className="flex items-center gap-2 text-xs text-[#850E35]/70 bg-[#FFF5E4]/80 p-3 rounded-xl border border-[#850E35]/10">
-                <Clock className="w-4 h-4 text-[#E36A6A] shrink-0" />
-                <span>Academic inquiries answered within 24 business hours.</span>
-              </div>
-
-              {formSubmitted ? (
-                <div className="p-6 rounded-xl bg-[#FFF5E4] border border-[#850E35]/20 text-center space-y-2">
-                  <CheckCircle2 className="w-8 h-8 text-[#850E35] mx-auto" />
-                  <h4 className="text-sm font-bold text-[#850E35]">Inquiry Received</h4>
-                  <p className="text-xs text-[#850E35]/75">
-                    Thank you. Our curriculum research coordinator will reach out to your institutional email shortly.
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleFormSubmit} className="space-y-3.5">
+              {/* Simple Clean Inner Card Surface */}
+              <div className="relative z-10 w-full rounded-[14px] bg-white p-6 sm:p-7 space-y-5 border border-[#850E35]/10">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#FFF5E4] border border-[#850E35]/20 flex items-center justify-center text-[#850E35]">
+                    <MessageSquare className="w-5 h-5 text-[#850E35]" />
+                  </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-[#850E35] uppercase tracking-wider mb-1">
-                      Your Name
-                    </label>
-                    <input
+                    <h3 className="text-lg font-bold text-[#850E35]">Institutional Inquiry</h3>
+                    <p className="text-xs text-[#850E35]/65">Research initiative and technical helpdesk</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs text-[#850E35]/70 bg-[#FFF5E4]/80 p-3 rounded-xl border border-[#850E35]/10">
+                  <Clock className="w-4 h-4 text-[#E36A6A] shrink-0" />
+                  <span>Academic inquiries answered within 24 business hours.</span>
+                </div>
+
+                {formSubmitted ? (
+                  <div className="p-6 rounded-xl bg-[#FFF5E4] border border-[#850E35]/20 text-center space-y-2">
+                    <CheckCircle2 className="w-8 h-8 text-[#850E35] mx-auto" />
+                    <h4 className="text-sm font-bold text-[#850E35]">Inquiry Received</h4>
+                    <p className="text-xs text-[#850E35]/75">
+                      Thank you. Our curriculum research coordinator will reach out to your institutional email shortly.
+                    </p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleFormSubmit} className="space-y-4 pt-1">
+                    <AnimatedInput
+                      label="Your Name"
                       type="text"
+                      icon={<User className="w-3.5 h-3.5" />}
                       required
                       placeholder="Dr. Jane Doe / Prof. John Smith"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl border border-[#850E35]/15 bg-[#FFFBF1] text-xs text-[#850E35] placeholder:text-[#850E35]/35 outline-none focus:border-[#850E35]"
                     />
-                  </div>
 
-                  <div>
-                    <label className="block text-[11px] font-bold text-[#850E35] uppercase tracking-wider mb-1">
-                      Institutional Email
-                    </label>
-                    <input
+                    <AnimatedInput
+                      label="Institutional Email"
                       type="email"
+                      icon={<Mail className="w-3.5 h-3.5" />}
                       required
                       placeholder="dean.cs@university.edu"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl border border-[#850E35]/15 bg-[#FFFBF1] text-xs text-[#850E35] placeholder:text-[#850E35]/35 outline-none focus:border-[#850E35]"
                     />
-                  </div>
 
-                  <div>
-                    <label className="block text-[11px] font-bold text-[#850E35] uppercase tracking-wider mb-1">
-                      Message / Query
-                    </label>
-                    <textarea
-                      rows={3}
-                      required
-                      placeholder="Specify syllabus analysis requirements, accreditation audit dates, or API queries..."
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl border border-[#850E35]/15 bg-[#FFFBF1] text-xs text-[#850E35] placeholder:text-[#850E35]/35 outline-none focus:border-[#850E35] resize-none"
-                    />
-                  </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#850E35] uppercase tracking-wider mb-1">
+                        Message / Query
+                      </label>
+                      <textarea
+                        rows={3}
+                        required
+                        placeholder="Specify syllabus analysis requirements, accreditation audit dates, or API queries..."
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#850E35]/20 bg-white text-xs sm:text-sm text-[#850E35] placeholder:text-[#850E35]/35 outline-none transition focus:border-[#850E35] focus:ring-2 focus:ring-[#850E35]/15 resize-none"
+                      />
+                    </div>
 
-                  <Button2
-                    type="submit"
-                    variant="default"
-                    className="w-full py-2.5 rounded-xl text-xs font-semibold text-[#FFFBF1] bg-[#850E35] hover:bg-[#6F0A2B] shadow-xs flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <span>Submit Inquiry</span>
-                    <Send className="w-3.5 h-3.5" />
-                  </Button2>
-                </form>
-              )}
-            </Card>
+                    <Button2
+                      type="submit"
+                      variant="default"
+                      className="w-full py-2.5 rounded-xl text-xs font-semibold text-[#FFFBF1] bg-[#850E35] hover:bg-[#6F0A2B] shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <span>Submit Inquiry</span>
+                      <Send className="w-3.5 h-3.5" />
+                    </Button2>
+                  </form>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

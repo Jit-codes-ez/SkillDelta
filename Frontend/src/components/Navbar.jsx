@@ -3,6 +3,7 @@ import { Menu, X, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button2 } from '@/components/Button2';
 import { cn } from '@/lib/utils';
+import ScrollProgressBar from '@/components/ScrollProgressBar';
 
 const NAV_LINKS = [
   { id: 'home', href: '/#home', label: 'Home' },
@@ -133,6 +134,7 @@ export default function Navbar() {
           : 'bg-transparent py-4 sm:py-5 border-b border-transparent'
       }`}
     >
+      <ScrollProgressBar className="fixed top-0 inset-x-0 z-[60] h-[3px]" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Left: SkillDelta Logo */}
         <a href="/" className="flex items-center gap-2 group select-none">
